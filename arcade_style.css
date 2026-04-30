@@ -1,8 +1,9 @@
-span.breakpoint{display: inline-block;}
-*{font-family:sans-serif;}
-body{background-color:black;}
-h1{margin:0.25rem 0;color:white;}
-h2{margin:0.25rem 0;color:white;}
-p{margin:0.25rem 0;color:white;}
-button{margin:0.25rem 0;font-size:2em;border-width:0.125em;border-style:solid;background-color:black;color:white;border-color:dimgray;}
-button:hover{background-color:dimgray;color:white;border-color:white;}
+* {font-family: sans-serif; line-height: 100%;}
+body {background-color: black;}
+h1 {margin: 0.25rem; color: white;}
+h2 {margin: 0.25rem; color: white;}
+p {margin: 0.25rem; color: white;}
+button {margin: 0; margin-right: 1rem; padding: 0.25rem; font-size: 2em; font-weight: bold; border-width: 0.25rem 0.5rem; border-style: solid; background-color: black; color: white; border-color: dimgray;}
+button:hover {background-color: dimgray; color: white; border-color: white;}
+div.box {border-width: 0.25rem 0.5rem; border-style: solid; background-color: black; border-color: dimgray; display: inline-block;}
+span.breakpoint {display: inline-block;}

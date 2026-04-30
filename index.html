@@ -10,34 +10,45 @@
 </head>
 
 <body>
-	<h1>
-		<span class="breakpoint">POPGOES ARCADE</span>
-		<span class="breakpoint">BATTLE SIMULATOR</span>
-	</h1>
-	<div id="div_menu" style="display:block;">
-		<button type="button" onclick="btn_dev_load_battle()">dev: load battle</button>
+	<div class="box">
+		<h1>
+			<span class="breakpoint">POPGOES ARCADE</span>
+			<span class="breakpoint">BATTLE SIMULATOR</span>
+		</h1>
 	</div>
-	<div id="div_battle_buttons" style="display:none;">
-		<button type="button" onclick="btn_battle_attack()">ATTACK</button>
+	<div id="div_menu" style="display: block;">
 		<br>
-		<button type="button" onclick="btn_battle_block()">BLOCK</button>
-		<br>
-		<button type="button" onclick="btn_battle_info()">INFO</button>
+		<button type="button" onclick="btn_dev_load_battle()">dev: load battle</button><button type="button" onclick="btn_dev_min_stats()">dev: min stats</button><button type="button" onclick="btn_dev_max_stats()">dev: max stats</button>
 	</div>
-	<div id="div_battle_end_button" style="display:none;">
+	<div id="div_battle_end_button" style="display: none;">
+		<br>
 		<button type="button" onclick="btn_battle_back()">BACK</button>
 	</div>
-	<div id="div_battle" style="display:none;">
+	<div id="div_battle_enemy" style="display: none;">
 		<br>
-		<h2 id="text_enemy_name">error: text_enemy_name</h2>
-		<p id="text_enemy_hp">error: text_enemy_hp</p>
-		<p id="text_enemy_atk">error: text_enemy_atk</p>
-		<br><br>
-		<h2 id="text_player_name">error: text_player_name</h2>
-		<p id="text_player_hp">error: text_player_hp</p>
-		<p id="text_player_atk">error: text_player_atk</p>
-		<br><br>
-		<p id="text_output">error: text_output</p>
+		<div class="box">
+			<h2 id="text_enemy_name">error: text_enemy_name</h2>
+			<p id="text_enemy_hp">error: text_enemy_hp</p>
+			<p id="text_enemy_atk">error: text_enemy_atk</p>
+		</div>
+	</div>
+	<div id="div_battle_buttons" style="display: none;">
+		<br>
+		<button type="button" onclick="btn_battle_attack()">ATTACK</button><button type="button" onclick="btn_battle_block()">BLOCK</button><button type="button" onclick="btn_battle_info()">INFO</button>
+	</div>
+	<div id="div_battle_player" style="display: none;">
+		<br>
+		<div class="box">
+			<h2 id="text_player_name">error: text_player_name</h2>
+			<p id="text_player_hp">error: text_player_hp</p>
+			<p id="text_player_atk">error: text_player_atk</p>
+		</div>
+	</div>
+	<div id="div_battle_textbox" style="display: none;">
+		<br>
+		<div class="box">
+			<p id="text_output">error: text_output</p>
+		</div>
 	</div>
 </body>
 

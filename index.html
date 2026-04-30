@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>POPGOES Arcade Battle Simulator</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="./arcade_style.css">
+	<script src="./arcade_script.js"></script>
+</head>
+
+<body>
+	<h1>
+		<span class="breakpoint">POPGOES ARCADE</span>
+		<span class="breakpoint">BATTLE SIMULATOR</span>
+	</h1>
+	<div id="div_menu" style="display:block;">
+		<button type="button" onclick="btn_dev_load_battle()">dev: load battle</button>
+	</div>
+	<div id="div_battle_buttons" style="display:none;">
+		<button type="button" onclick="btn_battle_attack()">ATTACK</button>
+		<br>
+		<button type="button" onclick="btn_battle_block()">BLOCK</button>
+		<br>
+		<button type="button" onclick="btn_battle_info()">INFO</button>
+	</div>
+	<div id="div_battle_end_button" style="display:none;">
+		<button type="button" onclick="btn_battle_back()">BACK</button>
+	</div>
+	<div id="div_battle" style="display:none;">
+		<br>
+		<h2 id="text_enemy_name">error: text_enemy_name</h2>
+		<p id="text_enemy_hp">error: text_enemy_hp</p>
+		<p id="text_enemy_atk">error: text_enemy_atk</p>
+		<br><br>
+		<h2 id="text_player_name">error: text_player_name</h2>
+		<p id="text_player_hp">error: text_player_hp</p>
+		<p id="text_player_atk">error: text_player_atk</p>
+		<br><br>
+		<p id="text_output">error: text_output</p>
+	</div>
+</body>
+
+</html>

@@ -195,6 +195,10 @@ function display_update() {
 }
 
 function output_text(newest_text_output) {
+	global_output_text += "* " + newest_text_output + "<br>"
+};
+
+function output_text_silent(newest_text_output) {
 	global_output_text += newest_text_output + "<br>"
 };
 
@@ -231,23 +235,25 @@ function battle_reset() {
 
 function turn_hander(player_action) {
 	clear_output_text();
-	let damage_amount = 0;
+	let enemy_damaged = 0;
+	let player_damaged = 0;
+	
 	let blocking = false;
 	if (player_action == actions.attack) {
 		output_text(player.name_short + " ATTACKED " + battle.enemy.name_long);
-		damage_amount = player.atk;
+		enemy_damaged = player.atk;
 		if (randbool(player.crit / 100)) {
-			damage_amount *= 3;
+			enemy_damaged *= 3;
 			output_text("<b><span style='color: " + colors.crit + ";'>CRIT!</span></b>");
 		}
-		battle.enemy_hp -= damage_amount;
-		output_text(battle.enemy.name_long + " TOOK <b>" + damage_amount + "</b> DAMAGE");
+		battle.enemy_hp -= enemy_damaged;
+		output_text(battle.enemy.name_long + " LOST <b>" + enemy_damaged + "</b> HP");
 	}
 	if (player_action == actions.block) {
 		blocking = true;
 		output_text(player.name_short + " BLOCKED");
 	}
-	output_text("");
+	output_text_silent("");
 	
 	if (battle.enemy_hp <= 0) {
 		battle.enemy_hp = 0;
@@ -266,18 +272,18 @@ function turn_hander(player_action) {
 				if (randbool(battle.enemy.miss / 100)) {
 					output_text("<b><span style='color: " + colors.miss + ";'>MISS!</span></b>");
 				} else {
-					damage_amount = battle.enemy.atk;
+					player_damaged = battle.enemy.atk;
 					if (blocking) {
-						damage_amount /= 2;
+						player_damaged /= 2;
 						output_text("<b>BLOCK!</b>");
 					}
 					if (battle.enemy_charging) {
-						damage_amount *= 3;
+						player_damaged *= 3;
 						output_text("<b><span style='color: " + colors.crit + ";'>CRIT!</span></b>");
 					}
-					damage_amount = Math.round(damage_amount);
-					battle.player_hp -= damage_amount;
-					output_text(player.name_short + " TOOK <b>" + damage_amount + "</b> DAMAGE");
+					player_damaged = Math.round(player_damaged);
+					battle.player_hp -= player_damaged;
+					output_text(player.name_short + " LOST <b>" + player_damaged + "</b> HP");
 				}
 				battle.enemy_charging = false;
 			}
@@ -285,11 +291,10 @@ function turn_hander(player_action) {
 		if (battle.player_hp <= 0) {
 			battle.player_hp = 0;
 			change_state(states.battle_end);
-			output_text("");
+			output_text_silent("");
 			output_text("<b>YOU LOSE...</b>");
 		}
 	}
-	output_text("");
 	
 	if (battle.enemy_charging) {
 		battle.enemy_status_text = "<b><span style='color: " + colors.crit + ";'>CHARGING...</span></b>";
@@ -298,7 +303,8 @@ function turn_hander(player_action) {
 	}
 	
 	battle.turn_count++;
-	output_text("dev: current turn: " + battle.turn_count);
+	output_text_silent("");
+	output_text_silent("dev: current turn: " + battle.turn_count);
 	display_update();
 }
 
@@ -312,14 +318,14 @@ function btn_battle_block() {
 
 function btn_battle_info() {
 	clear_output_text();
-	output_text("NAME: " + battle.enemy.name_long);
-	output_text("LOCATION: <b>" + battle.enemy.location + "</b>");
-	output_text("HP: <b>" + battle.enemy.hp + "</b>");
-	output_text("ATK: <b>" + battle.enemy.atk + "</b>");
-	output_text("CRIT: <b>" + battle.enemy.crit + "</b>%");
-	output_text("MISS: <b>" + battle.enemy.miss + "</b>%");
-	output_text("SPAWN: <b>" + battle.enemy.spawn + "</b>%");
-	output_text("REWARD: <b>" + battle.enemy.reward + "</b> COINS");
+	output_text_silent("NAME: " + battle.enemy.name_long);
+	output_text_silent("LOCATION: <b>" + battle.enemy.location + "</b>");
+	output_text_silent("HP: <b>" + battle.enemy.hp + "</b>");
+	output_text_silent("ATK: <b>" + battle.enemy.atk + "</b>");
+	output_text_silent("CRIT: <b>" + battle.enemy.crit + "</b>%");
+	output_text_silent("MISS: <b>" + battle.enemy.miss + "</b>%");
+	output_text_silent("SPAWN: <b>" + battle.enemy.spawn + "</b>%");
+	output_text_silent("REWARD: <b>" + battle.enemy.reward + "</b> COINS");
 	display_update();
 }
 

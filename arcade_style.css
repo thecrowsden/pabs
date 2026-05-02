@@ -1,28 +1,39 @@
 * {font-family:sans-serif; line-height:100%; text-wrap:balance;}
-body {background-color:black; margin:0; font-size:2rem;}
+body {background-color:black; margin:0; font-size:1.5rem;}
 p {margin:0.5rem; color:white;}
-button {margin:0.5rem 0 0; padding:0.5rem; width:24rem; font-size:2rem; font-weight:bold; text-align:center; border-width:0.25rem 0.5rem; border-style:solid; background-color:black; color:white; border-color:dimgray;}
+button {margin:0.5rem 0 0; padding:0.5rem; width:34rem; min-height:6rem; font-size:1.5rem; font-weight:bold; text-align:center; border-width:0.25rem 0.5rem; border-style:solid; background-color:black; color:white; border-color:dimgray;}
 button:hover {background-color:dimgray; border-color:white;}
 button:hover:disabled {background-color:black; border-color:white;}
 button.button_justify {text-align-last:justify;}
-button.button_wide {width:49rem;}
-div.box {margin:0.5rem auto 0; border-width:0.25rem 0.5rem; display:block; width:48rem; border-style:solid; background-color:black; border-color:dimgray;}
-div.hp_base {margin:0 auto; height:2rem; width:47rem; background-color:dimgray;}
+button.button_wide {width:69rem;}
+div.box {margin:0.5rem auto 0; border-width:0.25rem 0.5rem; display:block; width:68rem; border-style:solid; background-color:black; border-color:dimgray;}
+div.hp_base {margin:0 auto; height:2rem; width:67rem; background-color:dimgray;}
 div.hp_bar {height:100%; width:100%; background-color:chartreuse;}
 div.box_title {text-align:center;}
 div.button_zone {text-align:center;}
-div.button_column {margin-right:0.5rem; text-align:center; display:inline-block;}
-div.button_column_right {text-align:center; display:inline-block;}
-div.button_gap {width:1rem; height:0; display:inline-block;}
+div.button_column {margin-right:0.5rem; display:inline-block;}
+div.button_column_right {display:inline-block;}
 .inline_left {display:inline-block;}
 .inline_right {display:inline-block; float:right;}
 
+@media (max-width:70rem) {
+	button {width:24rem;}
+	button.button_wide {width:49rem;}
+	div.box {width:48rem;}
+	div.hp_base {width:47rem;}
+}
+
 @media (max-width:50rem) {
+	button {width:14rem;}
+	button.button_wide {width:29rem;}
+	div.box {width:28rem;}
+	div.hp_base {width:27rem;}
+}
+@media (max-width:30rem) {
 	button {width:100vw; border-left-width:0; border-right-width:0;}
 	button.button_wide {width:100vw;}
-	div.box {border-left-width:0; border-right-width:0; width:100vw;}
+	div.box {width:100vw; border-left-width:0; border-right-width:0;}
 	div.hp_base {width:100vw;}
-	div.button_column {display:block;}
-	div.button_column_right {margin-right:0; display:block;}
-	div.button_gap {width:0;}
+	div.button_column {margin-right:0; display:block;}
+	div.button_column_right {display:block;}
 }

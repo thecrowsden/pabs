@@ -9,43 +9,59 @@
 	<script src="./arcade_script.js"></script>
 </head>
 
-<body>
-	<div class="box">
-		<h1>
-			<span class="breakpoint">POPGOES ARCADE</span>
-			<span class="breakpoint">BATTLE SIMULATOR</span>
-		</h1>
+<body onLoad="body_onload()">
+	<div class="box box_title">
+		<h1>POPGOES ARCADE BATTLE SIMULATOR</h1>
 	</div>
-	<div id="div_menu" style="display: block;">
-		<br>
-		<button type="button" onclick="btn_dev_load_battle()">dev: load battle</button><button type="button" onclick="btn_dev_min_stats()">dev: min stats</button><button type="button" onclick="btn_dev_max_stats()">dev: max stats</button>
-	</div>
-	<div id="div_battle_end_button" style="display: none;">
-		<br>
-		<button type="button" onclick="btn_battle_back()">BACK</button>
-	</div>
-	<div id="div_battle_enemy" style="display: none;">
-		<br>
+	<div id="div_menu">
 		<div class="box">
-			<h2 id="text_enemy_name">error: text_enemy_name</h2>
-			<p id="text_enemy_hp">error: text_enemy_hp</p>
-			<p id="text_enemy_atk">error: text_enemy_atk</p>
+			<h2 id="text_stats_name">error: text_stats_name</h2>
+		</div>
+		<div class="button_zone">
+			<button type="button" onclick="btn_dev_load_battle()">dev: load battle</button>
+			<br>
+			<button type="button" onclick="btn_dev_min_stats()">dev: min stats</button>
+			<br>
+			<button type="button" onclick="btn_dev_max_stats()">dev: max stats</button>
 		</div>
 	</div>
-	<div id="div_battle_buttons" style="display: none;">
-		<br>
-		<button type="button" onclick="btn_battle_attack()">ATTACK</button><button type="button" onclick="btn_battle_block()">BLOCK</button><button type="button" onclick="btn_battle_info()">INFO</button>
-	</div>
-	<div id="div_battle_player" style="display: none;">
-		<br>
-		<div class="box">
-			<h2 id="text_player_name">error: text_player_name</h2>
-			<p id="text_player_hp">error: text_player_hp</p>
-			<p id="text_player_atk">error: text_player_atk</p>
+	<div id="div_battle_end_button">
+		<div class="button_zone">
+			<button type="button" onclick="btn_battle_back()">BACK</button>
 		</div>
 	</div>
-	<div id="div_battle_textbox" style="display: none;">
-		<br>
+	<div id="div_battle_enemy">
+		<div class="box">
+			<p id="text_enemy_atk" class="inline_right">error: text_enemy_atk</p>
+			<h2 id="text_enemy_name" class="inline_left">error: text_enemy_name</h2>
+			<div class="hp_base">
+				<div id="div_enemy_hp_bar" class="hp_bar">
+				</div>
+			</div>
+			<p id="text_enemy_status" class="inline_right">error: text_enemy_status</p>
+			<p id="text_enemy_hp" class="inline_left">error: text_enemy_hp</p>
+		</div>
+	</div>
+	<div id="div_battle_buttons">
+		<div class="button_zone">
+			<button type="button" onclick="btn_battle_attack()">ATTACK</button><div class="button_gap"></div><button type="button" onclick="btn_battle_block()">BLOCK</button>
+			<br>
+			<button type="button" onclick="btn_battle_info()">INFO</button><div class="button_gap"></div><button type="button" onclick="btn_battle_back()">RUN</button>
+		</div>
+	</div>
+	<div id="div_battle_player">
+		<div class="box">
+			<p id="text_player_atk" class="inline_right">error: text_player_atk</p>
+			<h2 id="text_player_name" class="inline_left">error: text_player_name</h2>
+			<div class="hp_base">
+				<div id="div_player_hp_bar" class="hp_bar">
+				</div>
+			</div>
+			<p id="text_player_status" class="inline_right">error: text_player_status</p>
+			<p id="text_player_hp" class="inline_left">error: text_player_hp</p>
+		</div>
+	</div>
+	<div id="div_battle_textbox">
 		<div class="box">
 			<p id="text_output">error: text_output</p>
 		</div>

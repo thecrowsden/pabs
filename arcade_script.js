@@ -46,15 +46,6 @@ const states = {
 		div_battle_buttons: true,
 		div_battle_textbox: true
 	},
-	battle_start: {
-		bg_color: "!AREA",
-		div_menu: false,
-		div_battle_end_button: false,
-		div_battle_enemy: true,
-		div_battle_player: true,
-		div_battle_buttons: true,
-		div_battle_textbox: false
-	},
 	battle_end: {
 		bg_color: "!AREA",
 		div_menu: false,
@@ -69,6 +60,8 @@ const states = {
 const enemies = {
 	c_deer: {
 		name: "CORRUPT DEER",
+		name_long: "<b>CORRUPT DEER</b>",
+		name_short: "<b>C. DEER</b>",
 		location: "WEST FOREST",
 		hp: 20,
 		atk: 2,
@@ -76,10 +69,13 @@ const enemies = {
 		miss: 20,
 		spawn: 50,
 		reward: 10,
+		weight: 60,
 		special: specials.none
 	},
 	c_hawk: {
 		name: "CORRUPT HAWK",
+		name_long: "<b>CORRUPT HAWK</b>",
+		name_short: "<b>C. HAWK</b>",
 		location: "WEST FOREST",
 		hp: 30,
 		atk: 5,
@@ -87,10 +83,13 @@ const enemies = {
 		miss: 40,
 		spawn: 33,
 		reward: 15,
+		weight: 40,
 		special: specials.none
 	},
 	c_hog: {
 		name: "CORRUPT HEDGEHOG",
+		name_long: "<b>CORRUPT HEDGEHOG</b>",
+		name_short: "<b>C. HEDGEHOG</b>",
 		location: "WEST FOREST",
 		hp: 50,
 		atk: 3,
@@ -98,10 +97,13 @@ const enemies = {
 		miss: 15,
 		spawn: 17,
 		reward: 25,
+		weight: 19,
 		special: specials.none
 	},
 	g_hawk: {
 		name: "GILDED HAWK",
+		name_long: "<b><span style='color: " + colors.gilded + ";'>GILDED HAWK</span></b>",
+		name_short: "<b><span style='color: " + colors.gilded + ";'>G. HAWK</span></b>",
 		location: "WEST FOREST",
 		hp: 30,
 		atk: 5,
@@ -109,6 +111,7 @@ const enemies = {
 		miss: 40,
 		spawn: 0.8,
 		reward: 150,
+		weight: 1,
 		special: specials.gilded
 	}
 };
@@ -117,30 +120,19 @@ const locations = {
 	wf: {
 		name: "WEST FOREST",
 		color: "saddlebrown",
-		rates: [
-			{
-				id: "c_deer",
-				rate: 60
-			},
-			{
-				id: "c_hawk",
-				rate: 40
-			},
-			{
-				id: "c_hog",
-				rate: 19
-			},
-			{
-				id: "g_hawk",
-				rate: 1
-			}
+		enemies: [
+			"c_deer",
+			"c_hawk",
+			"c_hog",
+			"g_hawk"
 		]
 	}
 };
 
 let player = {
-	name_long: "POPGOES THE WEASEL",
-	name_short: "POPGOES",
+	name: "POPGOES THE WEASEL",
+	name_long: "<b>POPGOES THE WEASEL</b>",
+	name_short: "<b>POPGOES</b>",
 	hp: 30,
 	atk: 4,
 	crit: 10,
@@ -160,7 +152,9 @@ let battle = {
 	},
 	enemy_hp: 0,
 	enemy_charging: false,
+	enemy_status_text: "",
 	player_hp: 0,
+	player_status_text: "",
 	turn_count: 1
 };
 
@@ -168,6 +162,11 @@ let global_output_text = "error: global_output_text";
 
 function randbool(random_odds) {
 	return Math.random() < random_odds;
+}
+
+function body_onload() {
+	change_state(states.menu);
+	display_update();
 }
 
 function change_state(new_state) {
@@ -180,13 +179,18 @@ function change_state(new_state) {
 }
 
 function display_update() {
-	document.getElementById("text_enemy_name").innerHTML = battle.enemy.name;
-	document.getElementById("text_enemy_name").style.color = battle.enemy.special == specials.gilded ? colors.gilded : colors.normal;
-	document.getElementById("text_enemy_hp").innerHTML = "HP: <b>" + battle.enemy_hp + "/" + battle.enemy.hp;
+	document.getElementById("text_stats_name").innerHTML = player.name_long;
+	
+	document.getElementById("text_enemy_name").innerHTML = battle.enemy.name_long;
 	document.getElementById("text_enemy_atk").innerHTML = "ATK: <b>" + battle.enemy.atk + "</b>";
+	document.getElementById("div_enemy_hp_bar").style.width = (100 * battle.enemy_hp / battle.enemy.hp) + "%";
+	document.getElementById("text_enemy_hp").innerHTML = "HP: <b>" + battle.enemy_hp + "/" + battle.enemy.hp + "</b>";
+	document.getElementById("text_enemy_status").innerHTML = battle.enemy_status_text;
 	document.getElementById("text_player_name").innerHTML = player.name_long;
-	document.getElementById("text_player_hp").innerHTML = "HP: <b>" + battle.player_hp + "/" + player.hp + "</b>";
 	document.getElementById("text_player_atk").innerHTML = "ATK: <b>" + player.atk + "</b>";
+	document.getElementById("div_player_hp_bar").style.width = (100 * battle.player_hp / player.hp) + "%";
+	document.getElementById("text_player_hp").innerHTML = "HP: <b>" + battle.player_hp + "/" + player.hp + "</b>";
+	document.getElementById("text_player_status").innerHTML = battle.player_status_text;
 	document.getElementById("text_output").innerHTML = global_output_text;
 }
 
@@ -199,17 +203,17 @@ function clear_output_text() {
 };
 
 function generate_enemy(location) {
-	let spawn_info = locations[location].rates;
+	let enemy_list = locations[location].enemies;
 	let weight_sum = 0;
-	spawn_info.forEach((i) => weight_sum += i.rate);
+	enemy_list.forEach((i) => weight_sum += enemies[i].weight);
 	let weight_index = Math.random() * weight_sum;
 	let enemy_chosen = false;
-	spawn_info.forEach((i) => {
-		if (!enemy_chosen && weight_index < i.rate) {
-			battle.enemy = enemies[i.id]
+	enemy_list.forEach((i) => {
+		if (!enemy_chosen && weight_index < enemies[i].weight) {
+			battle.enemy = enemies[i]
 			enemy_chosen = true;
 		} else {
-			weight_index -= i.rate;
+			weight_index -= enemies[i].weight;
 		}
 	});
 }
@@ -219,29 +223,29 @@ function battle_reset() {
 	battle.player_hp = player.hp;
 	battle.enemy_charging = false;
 	battle.turn_count = 1;
-	change_state(states.battle_start);
+	change_state(states.battle);
 	clear_output_text();
+	output_text(player.name_short + " ENCOUNTERED " + battle.enemy.name_long);
 	display_update();
 }
 
 function turn_hander(player_action) {
 	clear_output_text();
-	change_state(states.battle);
 	let damage_amount = 0;
 	let blocking = false;
 	if (player_action == actions.attack) {
-		output_text("<b>" + player.name_short + "</b> ATTACKED <b>" + battle.enemy.name + "</b>");
+		output_text(player.name_short + " ATTACKED " + battle.enemy.name_long);
 		damage_amount = player.atk;
 		if (randbool(player.crit / 100)) {
 			damage_amount *= 3;
 			output_text("<b><span style='color: " + colors.crit + ";'>CRIT!</span></b>");
 		}
 		battle.enemy_hp -= damage_amount;
-		output_text("<b>" + battle.enemy.name + "</b> TOOK <b>" + damage_amount + "</b> DAMAGE");
+		output_text(battle.enemy.name_long + " TOOK <b>" + damage_amount + "</b> DAMAGE");
 	}
 	if (player_action == actions.block) {
 		blocking = true;
-		output_text("<b>" + player.name_short + "</b> BLOCKED");
+		output_text(player.name_short + " BLOCKED");
 	}
 	output_text("");
 	
@@ -256,9 +260,9 @@ function turn_hander(player_action) {
 		} else {*/
 			if (!battle.enemy_charging && randbool(battle.enemy.crit / 100)) {
 				battle.enemy_charging = true;
-  				output_text("<b>" + battle.enemy.name + "</b> IS <b><span style='color: " + colors.crit + ";'>CHARGING</span></b>...");
+  				output_text(battle.enemy.name_long + " IS <b><span style='color: " + colors.crit + ";'>CHARGING...</span></b>");
 			} else {
-				output_text("<b>" + battle.enemy.name + "</b> ATTACKED <b>" + player.name_short + "</b>");
+				output_text(battle.enemy.name_long + " ATTACKED " + player.name_short);
 				if (randbool(battle.enemy.miss / 100)) {
 					output_text("<b><span style='color: " + colors.miss + ";'>MISS!</span></b>");
 				} else {
@@ -273,7 +277,7 @@ function turn_hander(player_action) {
 					}
 					damage_amount = Math.round(damage_amount);
 					battle.player_hp -= damage_amount;
-					output_text("<b>" + player.name_short + "</b> TOOK <b>" + damage_amount + "</b> DAMAGE");
+					output_text(player.name_short + " TOOK <b>" + damage_amount + "</b> DAMAGE");
 				}
 				battle.enemy_charging = false;
 			}
@@ -286,6 +290,12 @@ function turn_hander(player_action) {
 		}
 	}
 	output_text("");
+	
+	if (battle.enemy_charging) {
+		battle.enemy_status_text = "<b><span style='color: " + colors.crit + ";'>CHARGING...</span></b>";
+	} else {
+		battle.enemy_status_text = "";
+	}
 	
 	battle.turn_count++;
 	output_text("dev: current turn: " + battle.turn_count);
@@ -302,8 +312,7 @@ function btn_battle_block() {
 
 function btn_battle_info() {
 	clear_output_text();
-	change_state(states.battle);
-	output_text("NAME: <b>" + (battle.enemy.special == specials.gilded ? "<span style='color: " + colors.gilded + ";'>" : "") + battle.enemy.name + (battle.enemy.special == specials.gilded ? "</span>" : "") + "</b>");
+	output_text("NAME: " + battle.enemy.name_long);
 	output_text("LOCATION: <b>" + battle.enemy.location + "</b>");
 	output_text("HP: <b>" + battle.enemy.hp + "</b>");
 	output_text("ATK: <b>" + battle.enemy.atk + "</b>");

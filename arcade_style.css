@@ -1,9 +1,15 @@
-* {font-family: sans-serif; line-height: 100%;}
+* {font-family: sans-serif; line-height: 100%; text-wrap: balance;}
 body {background-color: black;}
-h1 {margin: 0.25rem; color: white;}
-h2 {margin: 0.25rem; color: white;}
-p {margin: 0.25rem; color: white;}
-button {margin: 0; margin-right: 1rem; padding: 0.25rem; font-size: 2em; font-weight: bold; border-width: 0.25rem 0.5rem; border-style: solid; background-color: black; color: white; border-color: dimgray;}
+h1 {margin: 0.5rem; color: white;}
+h2 {margin: 0.5rem; color: white; font-weight: normal;}
+p {margin: 0.5rem; color: white;}
+button {margin: 0 0 1rem; padding: 0.5rem; width:6em; font-size: 2em; font-weight: bold; text-align: center; border-width: 0.25rem 0.5rem; border-style: solid; background-color: black; color: white; border-color: dimgray;}
 button:hover {background-color: dimgray; color: white; border-color: white;}
-div.box {border-width: 0.25rem 0.5rem; border-style: solid; background-color: black; border-color: dimgray; display: inline-block;}
-span.breakpoint {display: inline-block;}
+div.box {margin: 0 auto 1rem; border-width: 0.25rem 0.5rem; display: block; width: 24rem; border-style: solid; background-color: black; border-color: dimgray;}
+div.hp_base {margin: 0 auto; height: 1.5rem; width: 23rem; background-color: dimgray;}
+div.hp_bar {height: 100%; width: 100%; background-color: chartreuse;}
+div.box_title {text-align: center;}
+div.button_zone {text-align: center; white-space: nowrap;}
+div.button_gap {width: 1rem; height: 0; display: inline-block;}
+.inline_left {display: inline-block;}
+.inline_right {display: inline-block; float: right;}

@@ -18,14 +18,29 @@
 			<p id="text_stats_name">error: text_stats_name</p>
 		</div>
 		<div class="button_zone">
-			<button type="button" onclick="btn_dev_load_battle()">dev: load battle</button><div class="button_gap"></div><button type="button">dev: placeholder</button>
+			<button type="button" class="button_wide" onclick="btn_dev_load_battle()">dev: load battle</button>
 			<br>
-			<button type="button" onclick="btn_dev_min_stats()">dev: min stats</button><div class="button_gap"></div><button type="button" onclick="btn_dev_max_stats()">dev: max stats</button>
+			<div class="button_column">
+				<button type="button" onclick="btn_dev_min_stats()">dev: min stats</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" onclick="btn_dev_max_stats()">dev: max stats</button>
+			</div>
 		</div>
 	</div>
-	<div id="div_battle_end_button">
+	<div id="div_battle_win">
 		<div class="button_zone">
-			<button type="button" onclick="btn_battle_back()">BACK</button><div class="button_gap"></div><button type="button" onclick="battle_reset()">RETRY</button>
+			<button type="button" class="button_wide" onclick="btn_battle_back()">BACK</button>
+		</div>
+	</div>
+	<div id="div_battle_lose">
+		<div class="button_zone">
+			<div class="button_column">
+				<button type="button" onclick="btn_battle_back()">BACK</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" onclick="battle_reset()">RETRY</button>
+			</div>
 		</div>
 	</div>
 	<div id="div_battle_enemy">
@@ -42,9 +57,30 @@
 	</div>
 	<div id="div_battle_buttons">
 		<div class="button_zone">
-			<button type="button" onclick="btn_battle_attack()">ATTACK</button><div class="button_gap"></div><button type="button" onclick="btn_battle_block()">BLOCK</button>
+			<div class="button_column">
+				<button type="button" onclick="btn_battle_attack()">ATTACK</button>
+				<br>
+				<button type="button" onclick="btn_battle_block()">BLOCK</button>
+				<!--
+				<br>
+				<button type="button" onclick="" disabled>____</button>
+				<br>
+				<button type="button" onclick="" disabled>____</button>
+				-->
+			</div>
+			<div class="button_column_right">
+				<!--
+				<button type="button" onclick="" disabled>____</button>
+				<br>
+				<button type="button" onclick="" disabled>____</button>
+				<br>
+				-->
+				<button type="button" onclick="" disabled>____</button>
+				<br>
+				<button type="button" onclick="btn_battle_back()">RUN</button>
+			</div>
 			<br>
-			<button type="button" onclick="btn_battle_info()">INFO</button><div class="button_gap"></div><button type="button" onclick="btn_battle_back()">RUN</button>
+			<button type="button" class="button_wide" onclick="btn_battle_info()">INFO</button>
 		</div>
 	</div>
 	<div id="div_battle_player">

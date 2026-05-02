@@ -20,7 +20,8 @@ const colors = {
 
 const div_list = [
 	"div_menu",
-	"div_battle_end_button",
+	"div_battle_win",
+	"div_battle_lose",
 	"div_battle_enemy",
 	"div_battle_player",
 	"div_battle_buttons",
@@ -31,7 +32,8 @@ const states = {
 	menu: {
 		bg_color: "black",
 		div_menu: true,
-		div_battle_end_button: false,
+		div_battle_win: false,
+		div_battle_lose: false,
 		div_battle_enemy: false,
 		div_battle_player: false,
 		div_battle_buttons: false,
@@ -40,16 +42,28 @@ const states = {
 	battle: {
 		bg_color: "!AREA",
 		div_menu: false,
-		div_battle_end_button: false,
+		div_battle_win: false,
+		div_battle_lose: false,
 		div_battle_enemy: true,
 		div_battle_player: true,
 		div_battle_buttons: true,
 		div_battle_textbox: true
 	},
-	battle_end: {
+	battle_win: {
 		bg_color: "!AREA",
 		div_menu: false,
-		div_battle_end_button: true,
+		div_battle_win: true,
+		div_battle_lose: false,
+		div_battle_enemy: true,
+		div_battle_player: true,
+		div_battle_buttons: false,
+		div_battle_textbox: true
+	},
+	battle_lose: {
+		bg_color: "!AREA",
+		div_menu: false,
+		div_battle_win: false,
+		div_battle_lose: true,
 		div_battle_enemy: true,
 		div_battle_player: true,
 		div_battle_buttons: false,
@@ -257,7 +271,7 @@ function turn_hander(player_action) {
 	
 	if (battle.enemy_hp <= 0) {
 		battle.enemy_hp = 0;
-		change_state(states.battle_end);
+		change_state(states.battle_win);
 		output_text("<b>YOU WIN!</b>");
 		output_text("PRIZE: <b>" + battle.enemy.reward + "</b> COINS");
 	} else {
@@ -290,7 +304,7 @@ function turn_hander(player_action) {
 		//}
 		if (battle.player_hp <= 0) {
 			battle.player_hp = 0;
-			change_state(states.battle_end);
+			change_state(states.battle_lose);
 			output_text_silent("");
 			output_text("<b>YOU LOSE...</b>");
 		}

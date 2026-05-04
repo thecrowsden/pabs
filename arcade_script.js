@@ -78,11 +78,15 @@ const colors = {
 	faded: " style='color:darkgray;'",
 	heal_faded: " style='color:limegreen;'",
 	gilded: " style='color:goldenrod;'",
+	plus: " style='color:crimson;'",
 };
 
 const div_list = [
 	"div_menu",
 	"div_stats",
+	"div_forest_main",
+	"div_forest_north_4",
+	"div_forest_north_5",
 	"div_battle_win",
 	"div_battle_lose",
 	"div_battle_enemy",
@@ -96,73 +100,47 @@ const states = {
 	menu: {
 		bg_color: "black",
 		div_menu: true,
-		div_stats: false,
-		div_battle_win: false,
-		div_battle_lose: false,
-		div_battle_enemy: false,
-		div_battle_player: false,
-		div_battle_buttons: false,
-		div_battle_inv: false,
-		div_battle_textbox: false,
 	},
 	stats: {
 		bg_color: "black",
-		div_menu: false,
 		div_stats: true,
-		div_battle_win: false,
-		div_battle_lose: false,
-		div_battle_enemy: false,
-		div_battle_player: false,
-		div_battle_buttons: false,
-		div_battle_inv: false,
-		div_battle_textbox: false,
+	},
+	forest: {
+		bg_color: "!AREA",
+		div_forest_main: true,
+	},
+	forest_north: {
+		bg_color: "!AREA",
+		div_forest_main: true,
+		div_forest_north_4: true,
+		div_forest_north_5: true,
 	},
 	battle: {
 		bg_color: "!AREA",
-		div_menu: false,
-		div_stats: false,
-		div_battle_win: false,
-		div_battle_lose: false,
 		div_battle_enemy: true,
 		div_battle_player: true,
 		div_battle_buttons: true,
-		div_battle_inv: false,
 		div_battle_textbox: true,
 	},
 	battle_inv: {
 		bg_color: "!AREA",
-		div_menu: false,
-		div_stats: false,
-		div_battle_win: false,
-		div_battle_lose: false,
 		div_battle_enemy: true,
 		div_battle_player: true,
-		div_battle_buttons: false,
 		div_battle_inv: true,
 		div_battle_textbox: true,
 	},
 	battle_win: {
 		bg_color: "!AREA",
-		div_menu: false,
-		div_stats: false,
 		div_battle_win: true,
-		div_battle_lose: false,
 		div_battle_enemy: true,
 		div_battle_player: true,
-		div_battle_buttons: false,
-		div_battle_inv: false,
 		div_battle_textbox: true,
 	},
 	battle_lose: {
 		bg_color: "!AREA",
-		div_menu: false,
-		div_stats: false,
-		div_battle_win: false,
 		div_battle_lose: true,
 		div_battle_enemy: true,
 		div_battle_player: true,
-		div_battle_buttons: false,
-		div_battle_inv: false,
 		div_battle_textbox: true,
 	},
 };
@@ -171,49 +149,45 @@ const enemies = {
 	c_deer: {
 		name: "CORRUPT DEER",
 		name_long: "<b>CORRUPT DEER</b>",
-		name_short: "<b>C. DEER</b>",
 		location: "WEST FOREST",
 		hp: 20,
 		atk: 2,
 		crit: 0,
 		miss: 20,
 		spawn: 50,
-		reward: 10,
+		reward: 5,
 		weight: 60,
 		special: specials.none,
 	},
 	c_hawk: {
 		name: "CORRUPT HAWK",
 		name_long: "<b>CORRUPT HAWK</b>",
-		name_short: "<b>C. HAWK</b>",
 		location: "WEST FOREST",
 		hp: 30,
 		atk: 5,
 		crit: 20,
 		miss: 40,
 		spawn: 33,
-		reward: 15,
+		reward: 10,
 		weight: 40,
 		special: specials.none,
 	},
-	c_hog: {
+	c_hedgehog: {
 		name: "CORRUPT HEDGEHOG",
 		name_long: "<b>CORRUPT HEDGEHOG</b>",
-		name_short: "<b>C. HEDGEHOG</b>",
 		location: "WEST FOREST",
 		hp: 50,
 		atk: 3,
 		crit: 10,
 		miss: 15,
 		spawn: 17,
-		reward: 25,
+		reward: 20,
 		weight: 19,
 		special: specials.none,
 	},
 	g_hawk: {
 		name: "GILDED HAWK",
 		name_long: "<b" + colors.gilded + ">GILDED HAWK</b>",
-		name_short: "<b" + colors.gilded + ">G. HAWK</b>",
 		location: "WEST FOREST",
 		hp: 30,
 		atk: 5,
@@ -224,6 +198,344 @@ const enemies = {
 		weight: 1,
 		special: specials.gilded,
 	},
+	c_boar: {
+		name: "CORRUPT BOAR",
+		name_long: "<b>CORRUPT BOAR</b>",
+		location: "SOUTH FOREST",
+		hp: 40,
+		atk: 4,
+		crit: 5,
+		miss: 20,
+		spawn: 50,
+		reward: 10,
+		weight: 60,
+		special: specials.none,
+	},
+	c_cat: {
+		name: "CORRUPT CAT",
+		name_long: "<b>CORRUPT CAT</b>",
+		location: "SOUTH FOREST",
+		hp: 60,
+		atk: 6,
+		crit: 15,
+		miss: 0,
+		spawn: 33,
+		reward: 15,
+		weight: 40,
+		special: specials.none,
+	},
+	c_woodpecker: {
+		name: "CORRUPT WOODPECKER",
+		name_long: "<b>CORRUPT WOODPECKER</b>",
+		location: "SOUTH FOREST",
+		hp: 80,
+		atk: 8,
+		crit: 20,
+		miss: 20,
+		spawn: 17,
+		reward: 25,
+		weight: 19,
+		special: specials.none,
+	},
+	g_cat: {
+		name: "GILDED CAT",
+		name_long: "<b" + colors.gilded + ">GILDED CAT</b>",
+		location: "SOUTH FOREST",
+		hp: 60,
+		atk: 6,
+		crit: 15,
+		miss: 0,
+		spawn: 0.8,
+		reward: 150,
+		weight: 1,
+		special: specials.gilded,
+	},
+	c_owl: {
+		name: "CORRUPT OWL",
+		name_long: "<b>CORRUPT OWL</b>",
+		location: "EAST FOREST",
+		hp: 60,
+		atk: 6,
+		crit: 10,
+		miss: 15,
+		spawn: 50,
+		reward: 15,
+		weight: 60,
+		special: specials.none,
+	},
+	c_beaver: {
+		name: "CORRUPT BEAVER",
+		name_long: "<b>CORRUPT BEAVER</b>",
+		location: "EAST FOREST",
+		hp: 80,
+		atk: 8,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 20,
+		weight: 40,
+		special: specials.none,
+	},
+	c_wolf: {
+		name: "CORRUPT WOLF",
+		name_long: "<b>CORRUPT WOLF</b>",
+		location: "EAST FOREST",
+		hp: 120,
+		atk: 12,
+		crit: 40,
+		miss: 20,
+		spawn: 17,
+		reward: 30,
+		weight: 19,
+		special: specials.none,
+	},
+	g_beaver: {
+		name: "GILDED BEAVER",
+		name_long: "<b" + colors.gilded + ">GILDED BEAVER</b>",
+		location: "EAST FOREST",
+		hp: 80,
+		atk: 8,
+		crit: 20,
+		miss: 10,
+		spawn: 0.8,
+		reward: 150,
+		weight: 1,
+		special: specials.gilded,
+	},
+	d_deer: {
+		name: "DEAD DEER",
+		name_long: "<b>DEAD DEER</b>",
+		location: "NORTH FOREST",
+		hp: 80,
+		atk: 8,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 20,
+		weight: 33,
+		special: specials.none,
+	},
+	d_boar: {
+		name: "DEAD BOAR",
+		name_long: "<b>DEAD BOAR</b>",
+		location: "NORTH FOREST",
+		hp: 120,
+		atk: 12,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 20,
+		weight: 32,
+		special: specials.none,
+	},
+	d_owl: {
+		name: "DEAD OWL",
+		name_long: "<b>DEAD OWL</b>",
+		location: "NORTH FOREST",
+		hp: 180,
+		atk: 18,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 20,
+		weight: 32,
+		special: specials.none,
+	},
+	gd_deer: {
+		name: "GILDED DEAD DEER",
+		name_long: "<b" + colors.gilded + ">GILDED DEAD DEER</b>",
+		location: "NORTH FOREST",
+		hp: 80,
+		atk: 8,
+		crit: 20,
+		miss: 10,
+		spawn: 0.8,
+		reward: 150,
+		weight: 1,
+		special: specials.gilded,
+	},
+	gd_boar: {
+		name: "GILDED DEAD BOAR",
+		name_long: "<b" + colors.gilded + ">GILDED DEAD BOAR</b>",
+		location: "NORTH FOREST",
+		hp: 120,
+		atk: 12,
+		crit: 20,
+		miss: 10,
+		spawn: 0.8,
+		reward: 150,
+		weight: 1,
+		special: specials.gilded,
+	},
+	gd_owl: {
+		name: "GILDED DEAD OWL",
+		name_long: "<b" + colors.gilded + ">GILDED DEAD OWL</b>",
+		location: "NORTH FOREST",
+		hp: 180,
+		atk: 18,
+		crit: 20,
+		miss: 10,
+		spawn: 0.8,
+		reward: 150,
+		weight: 1,
+		special: specials.gilded,
+	},
+	cp_deer: {
+		name: "CORRUPT DEER+",
+		name_long: "<b>CORRUPT DEER<span" + colors.plus + ">+</span></b>",
+		location: "WEST FOREST",
+		hp: 120,
+		atk: 12,
+		crit: 0,
+		miss: 20,
+		spawn: 50,
+		reward: 10,
+		weight: 60,
+		special: specials.none,
+	},
+	cp_hawk: {
+		name: "CORRUPT HAWK+",
+		name_long: "<b>CORRUPT HAWK<span" + colors.plus + ">+</span></b>",
+		location: "WEST FOREST",
+		hp: 180,
+		atk: 24,
+		crit: 20,
+		miss: 40,
+		spawn: 33,
+		reward: 15,
+		weight: 40,
+		special: specials.none,
+	},
+	cp_hedgehog: {
+		name: "CORRUPT HEDGEHOG+",
+		name_long: "<b>CORRUPT HEDGEHOG<span" + colors.plus + ">+</span></b>",
+		location: "WEST FOREST",
+		hp: 240,
+		atk: 18,
+		crit: 10,
+		miss: 15,
+		spawn: 17,
+		reward: 25,
+		weight: 19,
+		special: specials.none,
+	},
+	cp_boar: {
+		name: "CORRUPT BOAR+",
+		name_long: "<b>CORRUPT BOAR<span" + colors.plus + ">+</span></b>",
+		location: "SOUTH FOREST",
+		hp: 180,
+		atk: 18,
+		crit: 5,
+		miss: 20,
+		spawn: 50,
+		reward: 15,
+		weight: 60,
+		special: specials.none,
+	},
+	cp_cat: {
+		name: "CORRUPT CAT+",
+		name_long: "<b>CORRUPT CAT<span" + colors.plus + ">+</span></b>",
+		location: "SOUTH FOREST",
+		hp: 240,
+		atk: 24,
+		crit: 15,
+		miss: 0,
+		spawn: 33,
+		reward: 20,
+		weight: 40,
+		special: specials.none,
+	},
+	cp_woodpecker: {
+		name: "CORRUPT WOODPECKER+",
+		name_long: "<b>CORRUPT WOODPECKER<span" + colors.plus + ">+</span></b>",
+		location: "SOUTH FOREST",
+		hp: 300,
+		atk: 30,
+		crit: 20,
+		miss: 20,
+		spawn: 17,
+		reward: 30,
+		weight: 19,
+		special: specials.none,
+	},
+	cp_owl: {
+		name: "CORRUPT OWL+",
+		name_long: "<b>CORRUPT OWL<span" + colors.plus + ">+</span></b>",
+		location: "EAST FOREST",
+		hp: 240,
+		atk: 24,
+		crit: 10,
+		miss: 15,
+		spawn: 50,
+		reward: 20,
+		weight: 60,
+		special: specials.none,
+	},
+	cp_beaver: {
+		name: "CORRUPT BEAVER+",
+		name_long: "<b>CORRUPT BEAVER<span" + colors.plus + ">+</span></b>",
+		location: "EAST FOREST",
+		hp: 300,
+		atk: 30,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 25,
+		weight: 40,
+		special: specials.none,
+	},
+	cp_wolf: {
+		name: "CORRUPT WOLF+",
+		name_long: "<b>CORRUPT WOLF<span" + colors.plus + ">+</span></b>",
+		location: "EAST FOREST",
+		hp: 360,
+		atk: 36,
+		crit: 40,
+		miss: 20,
+		spawn: 17,
+		reward: 35,
+		weight: 19,
+		special: specials.none,
+	},
+	dp_deer: {
+		name: "DEAD DEER+",
+		name_long: "<b>DEAD DEER<span" + colors.plus + ">+</span></b>",
+		location: "NORTH FOREST",
+		hp: 300,
+		atk: 30,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 25,
+		weight: 33,
+		special: specials.none,
+	},
+	dp_boar: {
+		name: "DEAD BOAR+",
+		name_long: "<b>DEAD BOAR<span" + colors.plus + ">+</span></b>",
+		location: "NORTH FOREST",
+		hp: 330,
+		atk: 33,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 25,
+		weight: 32,
+		special: specials.none,
+	},
+	dp_owl: {
+		name: "DEAD OWL+",
+		name_long: "<b>DEAD OWL<span" + colors.plus + ">+</span></b>",
+		location: "NORTH FOREST",
+		hp: 360,
+		atk: 36,
+		crit: 20,
+		miss: 10,
+		spawn: 33,
+		reward: 25,   
+		weight: 32,
+		special: specials.none,
+	},
 };
 
 const locations = {
@@ -233,10 +545,95 @@ const locations = {
 		enemies: [
 			"c_deer",
 			"c_hawk",
-			"c_hog",
+			"c_hedgehog",
 			"g_hawk",
 		],
 	},
+	sf: {
+		name: "SOUTH FOREST",
+		color: "forestgreen",
+		enemies: [
+			"c_boar",
+			"c_cat",
+			"c_woodpecker",
+			"g_cat",
+		],
+	},
+	ef: {
+		name: "EAST FOREST",
+		color: "whitesmoke",
+		enemies: [
+			"c_owl",
+			"c_beaver",
+			"c_wolf",
+			"g_beaver",
+		],
+	},
+	nf: {
+		name: "NORTH FOREST",
+		color: "black",
+		enemies: [
+			"d_deer",
+			"gd_deer",
+			"d_boar",
+			"gd_boar",
+			"d_owl",
+			"gd_owl",
+		],
+	},
+	wfp: {
+		name: "WEST FOREST<span" + colors.plus + ">+</span>",
+		color: "saddlebrown",
+		enemies: [
+			"cp_deer",
+			"cp_hawk",
+			"cp_hedgehog",
+			"g_hawk",
+		],
+	},
+	sfp: {
+		name: "SOUTH FOREST<span" + colors.plus + ">+</span>",
+		color: "forestgreen",
+		enemies: [
+			"cp_boar",
+			"cp_cat",
+			"cp_woodpecker",
+			"g_cat",
+		],
+	},
+	efp: {
+		name: "EAST FOREST<span" + colors.plus + ">+</span>",
+		color: "whitesmoke",
+		enemies: [
+			"cp_owl",
+			"cp_beaver",
+			"cp_wolf",
+			"g_beaver",
+		],
+	},
+	nfp: {
+		name: "NORTH FOREST<span" + colors.plus + ">+</span>",
+		color: "black",
+		enemies: [
+			"dp_deer",
+			"gd_deer",
+			"dp_boar",
+			"gd_boar",
+			"dp_owl",
+			"gd_owl",
+		],
+	},
+};
+
+const location_id = {
+	wf: "wf",
+	sf: "sf",
+	ef: "ef",
+	nf: "nf",
+	wfp: "wfp",
+	sfp: "sfp",
+	efp: "efp",
+	nfp: "nfp",
 };
 
 let player = {
@@ -270,6 +667,7 @@ let battle = {
 	player_atk_plus: 0,
 	player_def_plus: 0,
 	player_shield: 0,
+	player_items_used: [0, 0, 0, 0, 0, 0,],
 	player_status_text: "",
 	turn_count: 1,
 };
@@ -278,11 +676,6 @@ let global_output_text = "error: global_output_text";
 
 function randbool(random_odds) {
 	return Math.random() < random_odds;
-}
-
-function body_onload() {
-	change_state(states.menu);
-	display_update();
 }
 
 function change_state(new_state) {
@@ -294,6 +687,17 @@ function change_state(new_state) {
 	}
 	display_update();
 }
+
+function select_forest(forest_id) {
+	player.location = forest_id;
+	//change buttons
+	if (forest_id == location_id.nf || forest_id == location_id.nfp) {
+		change_state(states.forest_north);
+	} else {
+		change_state(states.forest);
+	}
+}
+
 
 function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
 	switch (modified_stat) {
@@ -319,10 +723,10 @@ function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
 					player.atk = 4;
 				break;
 				case stat_actions.minus:
-					player.atk -= 1;
+					player.atk--;
 				break;
 				case stat_actions.plus:
-					player.atk += 1;
+					player.atk++;
 				break;
 				case stat_actions.max:
 					player.atk = 30;
@@ -335,10 +739,10 @@ function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
 					player.inv[modified_item] = 0;
 				break;
 				case stat_actions.minus:
-					player.inv[modified_item] -= 1;
+					player.inv[modified_item]--;
 				break;
 				case stat_actions.plus:
-					player.inv[modified_item] += 1;
+					player.inv[modified_item]++;
 				break;
 				case stat_actions.max:
 					player.inv[modified_item] = 99;
@@ -416,6 +820,10 @@ function display_update() {
 		document.getElementById("btn_stats_inv_" + item_names[i].name + "_max").disabled = player.inv[i] >= 99;
 	});
 	
+	for (let i = 0; i < 6 && i < locations[player.location].enemies.length; i++) {
+		document.getElementById("btn_enemy_" + i).innerHTML = enemies[locations[player.location].enemies[i]].name_long;
+	}
+	
 	document.getElementById("text_enemy_name").innerHTML = battle.enemy.name_long;
 	document.getElementById("text_player_name").innerHTML = player.name_long;
 	document.getElementById("div_enemy_hp_bar").style.width = (100 * battle.enemy_hp / battle.enemy.hp) + "%";
@@ -462,6 +870,29 @@ function display_update() {
 	document.getElementById("btn_battle_inv_shield").disabled = player.inv[items.shield] <= 0;
 }
 
+function start_battle(enemy_index) {
+	battle.enemy = enemies[locations[player.location].enemies[enemy_index]];
+	battle_reset();
+}
+
+function battle_reset() {
+	battle.player_hp = player.hp;
+	battle.player_atk = player.atk;
+	battle.player_atk_plus = 0;
+	battle.player_def_plus = 0;
+	battle.player_shield = 0;
+	item_list.forEach((i) => battle.player_items_used[i] = 0);
+	clear_player_status_text();
+	battle.enemy_hp = battle.enemy.hp;
+	battle.enemy_charging = false;
+	clear_enemy_status_text();
+	battle.turn_count = 1;
+	change_state(states.battle);
+	clear_output_text();
+	output_text(player.name_short + " ENCOUNTERED " + battle.enemy.name_long);
+	display_update();
+}
+
 function generate_enemy(location) {
 	let enemy_list = locations[location].enemies;
 	let weight_sum = 0;
@@ -476,23 +907,7 @@ function generate_enemy(location) {
 			weight_index -= enemies[i].weight;
 		}
 	});
-}
-
-function battle_reset() {
-	battle.player_hp = player.hp;
-	battle.player_atk = player.atk;
-	battle.player_atk_plus = 0;
-	battle.player_def_plus = 0;
-	battle.player_shield = 0;
-	clear_player_status_text();
-	battle.enemy_hp = battle.enemy.hp;
-	battle.enemy_charging = false;
-	clear_enemy_status_text();
-	battle.turn_count = 1;
-	change_state(states.battle);
-	clear_output_text();
-	output_text(player.name_short + " ENCOUNTERED " + battle.enemy.name_long);
-	display_update();
+	battle_reset();
 }
 
 function turn_hander(player_action, used_item = items.acorn) {
@@ -527,7 +942,8 @@ function turn_hander(player_action, used_item = items.acorn) {
 			output_text(player.name_short + " BLOCKED");
 		break;
 		case actions.item:
-			player.inv[used_item] -= 1;
+			player.inv[used_item]--;
+			battle.player_items_used[used_item]++;
 			output_text(player.name_short + " USED <b>" + item_names[used_item].name_long + "</b>");
 			switch (used_item) {
 				case items.acorn:
@@ -599,6 +1015,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 			battle.player_hp = 0;
 			change_state(states.battle_lose);
 			output_text_silent("");
+			item_list.forEach((i) => player.inv[i] += battle.player_items_used[i]);
 			output_text("<b>YOU LOSE...</b>");
 		}
 	}
@@ -664,9 +1081,4 @@ function battle_info() {
 	output_text_silent("SPAWN: <b>" + battle.enemy.spawn + "</b>%");
 	output_text_silent("REWARD: <b>" + battle.enemy.reward + "</b> COINS");
 	display_update();
-}
-
-function btn_dev_load_battle() {
-	generate_enemy(player.location);
-	battle_reset();
 }

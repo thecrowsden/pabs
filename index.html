@@ -9,21 +9,38 @@
 	<script src="./arcade_script.js"></script>
 </head>
 
-<body onLoad="body_onload()">
+<body onLoad="change_state(states.menu)">
 	<div class="box box_title">
 		<p><b>POPGOES ARCADE BATTLE SIM</b></p>
 	</div>
 	<div id="div_menu">
 		<div class="button_zone">
+			<button type="button" class="button_wide" onclick="change_state(states.stats)">EDIT STATS</button>
+			<div></div>
 			<div class="button_column">
-				<button type="button" class="button_normal" onclick="btn_dev_load_battle()">dev: load battle</button>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.wf)">WEST FOREST</button>
+				<div></div>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.sf)">SOUTH FOREST</button>
+				<div></div>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.ef)">EAST FOREST</button>
+				<div></div>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.nf)">NORTH FOREST</button>
 			</div>
 			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="change_state(states.stats)">EDIT STATS</button>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.wfp)">WEST FOREST<span class="color_plus">+</span></button>
+				<div></div>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.sfp)">SOUTH FOREST<span class="color_plus">+</span></button>
+				<div></div>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.efp)">EAST FOREST<span class="color_plus">+</span></button>
+				<div></div>
+				<button type="button" class="button_normal" onclick="select_forest(location_id.nfp)">NORTH FOREST<span class="color_plus">+</span></button>
 			</div>
 		</div>
 	</div>
 	<div id="div_stats">
+		<div class="button_zone">
+			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
+		</div>
 		<div class="box">
 			<p id="text_stats_name">error: text_stats_name</p>
 			<p id="text_stats_coins">error: text_stats_coins</p>
@@ -93,8 +110,50 @@
 				<button type="button" class="button_normal" onclick="max_stats()">ALL MAX</button>
 			</div>
 		</div>
+	</div>
+	<div id="div_forest_main">
 		<div class="button_zone">
 			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
+			<div></div>
+			<button type="button" class="button_wide" onclick="generate_enemy(player.location)">RANDOM</button>
+			<div></div>
+			<div class="button_column">
+				<button type="button" id="btn_enemy_0" class="button_normal not_bold" onclick="start_battle(0)"></button>
+				<div></div>
+				<button type="button" id="btn_enemy_2" class="button_normal not_bold" onclick="start_battle(2)"></button>
+				<div id="div_forest_north_4">
+					<div></div>
+					<button type="button" id="btn_enemy_4" class="button_normal not_bold" onclick="start_battle(4)"></button>
+				</div>
+			</div>
+			<div class="button_column_right">
+				<button type="button" id="btn_enemy_1" class="button_normal not_bold" onclick="start_battle(1)"></button>
+				<div></div>
+				<button type="button" id="btn_enemy_3" class="button_normal not_bold" onclick="start_battle(3)"></button>
+				<div id="div_forest_north_5">
+					<div></div>
+					<button type="button" id="btn_enemy_5" class="button_normal not_bold" onclick="start_battle(5)"></button>
+				</div>
+			</div>
+			<!--
+			<div></div>
+			<button type="button" class="button_wide" onclick="">7</button>
+			-->
+		</div>
+	</div>
+	<div id="div_battle_win">
+		<div class="button_zone">
+			<button type="button" class="button_wide" onclick="select_forest(player.location)">BACK</button>
+		</div>
+	</div>
+	<div id="div_battle_lose">
+		<div class="button_zone">
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="select_forest(player.location)">BACK</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="battle_reset()">RETRY</button>
+			</div>
 		</div>
 	</div>
 	<div id="div_battle_enemy">
@@ -129,21 +188,6 @@
 			</div>
 		</div>
 	</div>
-	<div id="div_battle_win">
-		<div class="button_zone">
-			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
-		</div>
-	</div>
-	<div id="div_battle_lose">
-		<div class="button_zone">
-			<div class="button_column">
-				<button type="button" class="button_normal" onclick="change_state(states.menu)">BACK</button>
-			</div>
-			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="battle_reset()">RETRY</button>
-			</div>
-		</div>
-	</div>
 	<div id="div_battle_buttons">
 		<div class="button_zone">
 			<div class="button_column">
@@ -162,7 +206,7 @@
 				<div></div>
 				<button type="button" class="button_normal" onclick="" disabled>DIG</button>
 				<div></div>
-				<button type="button" class="button_normal" onclick="change_state(states.menu)">ESCAPE</button>
+				<button type="button" class="button_normal" onclick="select_forest(player.location)">ESCAPE</button>
 			</div>
 			<div></div>
 			<button type="button" class="button_wide" onclick="battle_info()">INFO</button>
@@ -170,6 +214,8 @@
 	</div>
 	<div id="div_battle_inv">
 		<div class="button_zone">
+			<button type="button" class="button_wide" onclick="change_state(states.battle)">BACK</button>
+			<div></div>
 			<div class="button_column">
 				<button type="button" id="btn_battle_inv_acorn" class="button_normal" onclick="turn_hander(actions.item, items.acorn)" disabled>error: btn_battle_inv_acorn</button>
 				<div></div>
@@ -184,8 +230,6 @@
 				<div></div>
 				<button type="button" id="btn_battle_inv_shield" class="button_normal" onclick="turn_hander(actions.item, items.shield)" disabled>error: btn_battle_inv_shield</button>
 			</div>
-			<div></div>
-			<button type="button" class="button_wide" onclick="change_state(states.battle)">BACK</button>
 		</div>
 	</div> 
 	<div id="div_battle_textbox">

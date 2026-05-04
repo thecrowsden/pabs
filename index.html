@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>POPGOES Arcade Battle Simulator</title>
+	<title>POPGOES Arcade Battle Sim</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<link rel="stylesheet" href="./arcade_style.css">
 	<script src="./arcade_script.js"></script>
@@ -11,7 +11,7 @@
 
 <body onLoad="body_onload()">
 	<div class="box box_title">
-		<p><b>POPGOES ARCADE BATTLE SIMULATOR</b></p>
+		<p><b>POPGOES ARCADE BATTLE SIM</b></p>
 	</div>
 	<div id="div_menu">
 		<div class="box">
@@ -21,80 +21,104 @@
 			<button type="button" class="button_wide" onclick="btn_dev_load_battle()">dev: load battle</button>
 			<div></div>
 			<div class="button_column">
-				<button type="button" onclick="btn_dev_min_stats()">dev: min stats</button>
+				<button type="button" class="button_normal" onclick="btn_dev_min_stats()">dev: min stats</button>
 			</div>
 			<div class="button_column_right">
-				<button type="button" onclick="btn_dev_max_stats()">dev: max stats</button>
-			</div>
-		</div>
-	</div>
-	<div id="div_battle_win">
-		<div class="button_zone">
-			<button type="button" class="button_wide" onclick="btn_battle_back()">BACK</button>
-		</div>
-	</div>
-	<div id="div_battle_lose">
-		<div class="button_zone">
-			<div class="button_column">
-				<button type="button" onclick="btn_battle_back()">BACK</button>
-			</div>
-			<div class="button_column_right">
-				<button type="button" onclick="battle_reset()">RETRY</button>
+				<button type="button" class="button_normal" onclick="btn_dev_max_stats()">dev: max stats</button>
 			</div>
 		</div>
 	</div>
 	<div id="div_battle_enemy">
 		<div class="box">
-			<p id="text_enemy_atk" class="inline_right">error: text_enemy_atk</p>
-			<p id="text_enemy_name" class="inline_left">error: text_enemy_name</p>
+			<div class="inline_zone">
+				<p id="text_enemy_atk" class="inline_right">error: text_enemy_atk</p>
+				<p id="text_enemy_name" class="inline_left">error: text_enemy_name</p>
+			</div>
 			<div class="hp_base">
 				<div id="div_enemy_hp_bar" class="hp_bar">
 				</div>
 			</div>
-			<p id="text_enemy_status" class="inline_right">error: text_enemy_status</p>
-			<p id="text_enemy_hp" class="inline_left">error: text_enemy_hp</p>
+			<div class="inline_zone">
+				<p id="text_enemy_status" class="inline_right">error: text_enemy_status</p>
+				<p id="text_enemy_hp" class="inline_left">error: text_enemy_hp</p>
+			</div>
+		</div>
+	</div>
+	<div id="div_battle_player">
+		<div class="box">
+			<div class="inline_zone">
+				<p id="text_player_atk" class="inline_right">error: text_player_atk</p>
+				<p id="text_player_name" class="inline_left">error: text_player_name</p>
+			</div>
+			<div class="hp_base">
+				<div id="div_player_hp_bar" class="hp_bar">
+				</div>
+			</div>
+			<div class="inline_zone">
+				<p id="text_player_status" class="inline_right">error: text_player_status</p>
+				<p id="text_player_hp" class="inline_left">error: text_player_hp</p>
+			</div>
+		</div>
+	</div>
+	<div id="div_battle_win">
+		<div class="button_zone">
+			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
+		</div>
+	</div>
+	<div id="div_battle_lose">
+		<div class="button_zone">
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="change_state(states.menu)">BACK</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="battle_reset()">RETRY</button>
+			</div>
 		</div>
 	</div>
 	<div id="div_battle_buttons">
 		<div class="button_zone">
 			<div class="button_column">
-				<button type="button" onclick="btn_battle_attack()">ATTACK</button>
+				<button type="button" class="button_normal" onclick="turn_hander(actions.attack)">ATTACK</button>
 				<div></div>
-				<button type="button" onclick="btn_battle_block()">BLOCK</button>
-				<!--
+				<button type="button" class="button_normal" onclick="turn_hander(actions.block)">BLOCK</button>
 				<div></div>
-				<button type="button" onclick="" disabled>____</button>
+				<button type="button" class="button_normal" onclick="change_state(states.battle_inv)">ITEMS</button>
 				<div></div>
-				<button type="button" onclick="" disabled>____</button>
-				-->
+				<button type="button" class="button_normal" onclick="" disabled>GIFT</button>
 			</div>
 			<div class="button_column_right">
-				<!--
-				<button type="button" onclick="" disabled>____</button>
+				<button type="button" class="button_normal" onclick="" disabled>JUMP</button>
 				<div></div>
-				<button type="button" onclick="" disabled>____</button>
+				<button type="button" class="button_normal" onclick="" disabled>HOOK</button>
 				<div></div>
-				-->
-				<button type="button" onclick="" disabled>____</button>
+				<button type="button" class="button_normal" onclick="" disabled>DIG</button>
 				<div></div>
-				<button type="button" onclick="btn_battle_back()">ESCAPE</button>
+				<button type="button" class="button_normal" onclick="change_state(states.menu)">ESCAPE</button>
 			</div>
 			<div></div>
 			<button type="button" class="button_wide" onclick="btn_battle_info()">INFO</button>
 		</div>
 	</div>
-	<div id="div_battle_player">
-		<div class="box">
-			<p id="text_player_atk" class="inline_right">error: text_player_atk</p>
-			<p id="text_player_name" class="inline_left">error: text_player_name</p>
-			<div class="hp_base">
-				<div id="div_player_hp_bar" class="hp_bar">
-				</div>
+	<div id="div_battle_inv">
+		<div class="button_zone">
+			<div class="button_column">
+				<button type="button" id="btn_battle_inv_acorn" class="button_normal" onclick="turn_hander(actions.item, items.acorn)" disabled>error: btn_battle_inv_acorn</button>
+				<div></div>
+				<button type="button" id="btn_battle_inv_fruit" class="button_normal" onclick="turn_hander(actions.item, items.fruit)" disabled>error: btn_battle_inv_fruit</button>
+				<div></div>
+				<button type="button" id="btn_battle_inv_pizza" class="button_normal" onclick="turn_hander(actions.item, items.pizza)" disabled>error: btn_battle_inv_pizza</button>
 			</div>
-			<p id="text_player_status" class="inline_right">error: text_player_status</p>
-			<p id="text_player_hp" class="inline_left">error: text_player_hp</p>
+			<div class="button_column_right">
+				<button type="button" id="btn_battle_inv_atk" class="button_normal" onclick="turn_hander(actions.item, items.atk)" disabled>error: btn_battle_inv_atk</button>
+				<div></div>
+				<button type="button" id="btn_battle_inv_def" class="button_normal" onclick="turn_hander(actions.item, items.def)" disabled>error: btn_battle_inv_def</button>
+				<div></div>
+				<button type="button" id="btn_battle_inv_shield" class="button_normal" onclick="turn_hander(actions.item, items.shield)" disabled>error: btn_battle_inv_shield</button>
+			</div>
+			<div></div>
+			<button type="button" class="button_wide" onclick="change_state(states.battle)">BACK</button>
 		</div>
-	</div>
+	</div> 
 	<div id="div_battle_textbox">
 		<div class="box">
 			<p id="text_output">error: text_output</p>

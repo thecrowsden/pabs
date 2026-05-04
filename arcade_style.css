@@ -1,36 +1,36 @@
-* {font-family:sans-serif; line-height:100%; text-wrap:balance;}
-body {background-color:black; margin:0; font-size:1.5rem;}
+* {font-family:sans-serif; text-wrap:balance;}
+:root {--global-width:min(100vw, 60rem);}
+body {background-color:black; margin:0; font-size:1rem;}
 p {margin:0.5rem; color:white;}
-button {margin:0.5rem 0 0; padding:0.5rem; width:34rem; min-height:6rem; font-size:1.5rem; font-weight:bold; text-align:center; border-width:0.25rem 0.5rem; border-style:solid; background-color:black; color:white; border-color:dimgray;}
-button:hover {background-color:dimgray; border-color:white;}
-button:hover:disabled {background-color:black; border-color:white;}
-button.button_justify {text-align-last:justify;}
-button.button_wide {width:69rem;}
-div.box {margin:0.5rem auto 0; border-width:0.25rem 0.5rem; display:block; width:68rem; border-style:solid; background-color:black; border-color:dimgray;}
-div.hp_base {margin:0 auto; height:2rem; width:67rem; background-color:dimgray;}
-div.hp_bar {height:100%; width:100%; background-color:chartreuse;}
+button {margin:0.5rem 0 0; padding:0.5rem; font-size:1rem; font-weight:bold; text-align:center; border-width:0.25rem 0.5rem; border-style:solid; background-color:black; color:white; border-color:dimgray;}
+button:disabled {color:dimgray;}
+button:hover {border-color:white;}
+button:hover:enabled {background-color:dimgray;}
+button.button_normal {width:calc(var(--global-width) / 2 - 1rem); min-height:5rem;}
+button.button_wide {width:calc(var(--global-width) - 1rem); min-height:5rem;}
+button.jump {color:yellow;}
+button.jump:hover:enabled {background-color:yellow;color:white;}
+button.hook {color:red;}
+button.hook:hover:enabled {background-color:red;color:white;}
+button.dig {color:dodgerblue;}
+button.dig:hover:enabled {background-color:dodgerblue;color:white;}
+div.box {margin:0.5rem auto 0; border-width:0.25rem 0.5rem; display:block; width:calc(var(--global-width) - 2rem); border-style:solid; background-color:black; border-color:dimgray;}
 div.box_title {text-align:center;}
-div.button_zone {text-align:center;}
-div.button_column {margin-right:0.5rem; display:inline-block;}
+div.hp_base {margin:0 auto; height:1.5rem; width:calc(var(--global-width) - 3rem); background-color:dimgray;}
+div.hp_bar {height:100%; width:100%; background-color:chartreuse;}
+div.button_zone {text-align:center; font-size:0;}
+div.button_zone * {font-size:1rem;}
+div.button_column {margin-right:1rem; display:inline-block;}
 div.button_column_right {display:inline-block;}
+.inline_zone * {font-size:1rem;}
+.inline_zone {font-size:0;}
 .inline_left {display:inline-block;}
-.inline_right {display:inline-block; float:right;}
+.inline_right {margin-left:0; margin-bottom:0; display:inline-block; float:right;}
+.marginless {margin:0;}
 
-@media (max-width:70rem) {
-	button {width:24rem;}
-	button.button_wide {width:49rem;}
-	div.box {width:48rem;}
-	div.hp_base {width:47rem;}
-}
-
-@media (max-width:50rem) {
-	button {width:14rem;}
-	button.button_wide {width:29rem;}
-	div.box {width:28rem;}
-	div.hp_base {width:27rem;}
-}
 @media (max-width:30rem) {
-	button {width:100vw; border-left-width:0; border-right-width:0;}
+	button {border-left-width:0; border-right-width:0;}
+	button.button_normal {width:100vw;}
 	button.button_wide {width:100vw;}
 	div.box {width:100vw; border-left-width:0; border-right-width:0;}
 	div.hp_base {width:100vw;}

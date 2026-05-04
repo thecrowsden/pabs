@@ -2,12 +2,13 @@
 :root {--global-width:min(100vw, 60rem);}
 body {background-color:black; margin:0; font-size:1rem;}
 p {margin:0.5rem; color:white;}
-button {margin:0.5rem 0 0; padding:0.5rem; font-size:1rem; font-weight:bold; text-align:center; border-width:0.25rem 0.5rem; border-style:solid; background-color:black; color:white; border-color:dimgray;}
+button {padding:0.25rem 0.5rem; font-size:1rem; font-weight:bold; text-align:center; border-width:0.25rem 0.5rem; border-style:solid; background-color:black; color:white; border-color:dimgray;}
 button:disabled {color:dimgray;}
 button:hover {border-color:white;}
 button:hover:enabled {background-color:dimgray;}
-button.button_normal {width:calc(var(--global-width) / 2 - 1rem); min-height:5rem;}
-button.button_wide {width:calc(var(--global-width) - 1rem); min-height:5rem;}
+button.button_small {margin:0 0 0.5rem 0.5rem;}
+button.button_normal {margin:0.5rem 0 0; width:calc(var(--global-width) / 2 - 1rem); min-height:5rem;}
+button.button_wide {margin:0.5rem 0 0; width:calc(var(--global-width) - 1rem); min-height:5rem;}
 button.jump {color:yellow;}
 button.jump:hover:enabled {background-color:yellow;color:white;}
 button.hook {color:red;}
@@ -20,12 +21,15 @@ div.hp_base {margin:0 auto; height:1.5rem; width:calc(var(--global-width) - 3rem
 div.hp_bar {height:100%; width:100%; background-color:chartreuse;}
 div.button_zone {text-align:center; font-size:0;}
 div.button_zone * {font-size:1rem;}
+div.button_zone_left {font-size:0;}
+div.button_zone_left * {font-size:1rem; display:inline-block;}
 div.button_column {margin-right:1rem; display:inline-block;}
 div.button_column_right {display:inline-block;}
 .inline_zone * {font-size:1rem;}
 .inline_zone {font-size:0;}
 .inline_left {display:inline-block;}
 .inline_right {margin-left:0; margin-bottom:0; display:inline-block; float:right;}
+.topless {margin-top:0;}
 .marginless {margin:0;}
 
 @media (max-width:30rem) {

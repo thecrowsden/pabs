@@ -14,18 +14,87 @@
 		<p><b>POPGOES ARCADE BATTLE SIM</b></p>
 	</div>
 	<div id="div_menu">
-		<div class="box">
-			<p id="text_stats_name">error: text_stats_name</p>
-		</div>
 		<div class="button_zone">
-			<button type="button" class="button_wide" onclick="btn_dev_load_battle()">dev: load battle</button>
-			<div></div>
 			<div class="button_column">
-				<button type="button" class="button_normal" onclick="btn_dev_min_stats()">dev: min stats</button>
+				<button type="button" class="button_normal" onclick="btn_dev_load_battle()">dev: load battle</button>
 			</div>
 			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="btn_dev_max_stats()">dev: max stats</button>
+				<button type="button" class="button_normal" onclick="change_state(states.stats)">EDIT STATS</button>
 			</div>
+		</div>
+	</div>
+	<div id="div_stats">
+		<div class="box">
+			<p id="text_stats_name">error: text_stats_name</p>
+			<p id="text_stats_coins">error: text_stats_coins</p>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_hp_min" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.min)">MIN</button>
+				<button type="button" id="btn_stats_hp_minus" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.minus)">-</button>
+				<button type="button" id="btn_stats_hp_plus" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.plus)">+</button>
+				<button type="button" id="btn_stats_hp_max" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.max)">MAX</button>
+				<p id="text_stats_hp">error: text_stats_hp</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_atk_min" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.min)">MIN</button>
+				<button type="button" id="btn_stats_atk_minus" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.minus)">-</button>
+				<button type="button" id="btn_stats_atk_plus" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.plus)">+</button>
+				<button type="button" id="btn_stats_atk_max" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.max)">MAX</button>
+				<p id="text_stats_atk">error: text_stats_atk</p>
+			</div>
+			<p class="topless">ITEMS:</p>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_inv_acorn_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.acorn)">MIN</button>
+				<button type="button" id="btn_stats_inv_acorn_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.acorn)">-</button>
+				<button type="button" id="btn_stats_inv_acorn_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.acorn)">+</button>
+				<button type="button" id="btn_stats_inv_acorn_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.acorn)">MAX</button>
+				<p id="text_stats_inv_acorn">error: text_stats_inv_acorn</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_inv_fruit_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.fruit)">MIN</button>
+				<button type="button" id="btn_stats_inv_fruit_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.fruit)">-</button>
+				<button type="button" id="btn_stats_inv_fruit_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.fruit)">+</button>
+				<button type="button" id="btn_stats_inv_fruit_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.fruit)">MAX</button>
+				<p id="text_stats_inv_fruit">error: text_stats_inv_fruit</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_inv_pizza_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.pizza)">MIN</button>
+				<button type="button" id="btn_stats_inv_pizza_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.pizza)">-</button>
+				<button type="button" id="btn_stats_inv_pizza_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.pizza)">+</button>
+				<button type="button" id="btn_stats_inv_pizza_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.pizza)">MAX</button>
+				<p id="text_stats_inv_pizza">error: text_stats_inv_pizza</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_inv_atk_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.atk)">MIN</button>
+				<button type="button" id="btn_stats_inv_atk_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.atk)">-</button>
+				<button type="button" id="btn_stats_inv_atk_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.atk)">+</button>
+				<button type="button" id="btn_stats_inv_atk_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.atk)">MAX</button>
+				<p id="text_stats_inv_atk">error: text_stats_inv_atk</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_inv_def_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.def)">MIN</button>
+				<button type="button" id="btn_stats_inv_def_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.def)">-</button>
+				<button type="button" id="btn_stats_inv_def_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.def)">+</button>
+				<button type="button" id="btn_stats_inv_def_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.def)">MAX</button>
+				<p id="text_stats_inv_def">error: text_stats_inv_def</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_inv_shield_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.shield)">MIN</button>
+				<button type="button" id="btn_stats_inv_shield_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.shield)">-</button>
+				<button type="button" id="btn_stats_inv_shield_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.shield)">+</button>
+				<button type="button" id="btn_stats_inv_shield_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.shield)">MAX</button>
+				<p id="text_stats_inv_shield">error: text_stats_inv_shield</p>
+			</div>
+		</div>
+		<div class="button_zone">
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="min_stats()">ALL MIN</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="max_stats()">ALL MAX</button>
+			</div>
+		</div>
+		<div class="button_zone">
+			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
 		</div>
 	</div>
 	<div id="div_battle_enemy">
@@ -96,7 +165,7 @@
 				<button type="button" class="button_normal" onclick="change_state(states.menu)">ESCAPE</button>
 			</div>
 			<div></div>
-			<button type="button" class="button_wide" onclick="btn_battle_info()">INFO</button>
+			<button type="button" class="button_wide" onclick="battle_info()">INFO</button>
 		</div>
 	</div>
 	<div id="div_battle_inv">

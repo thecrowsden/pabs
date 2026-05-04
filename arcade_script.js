@@ -485,26 +485,33 @@ function turn_hander(player_action, used_item = items.acorn) {
 		enemy_status_text("<span" + colors.crit + ">CHARGING</span>");
 	}
 	if (battle.player_atk_plus > 0) {
-		output_text_silent("<b>ATK+</b>: <b>" + battle.player_atk_plus + "</b> TURNS LEFT")
 		if (battle.player_atk_plus == 1) {
+			output_text_silent("<b>ATK+</b>: <b>1</b> TURN LEFT")
 			player_status_text("<span" + colors.faded + ">ATK+</span>");
 		} else {
+			output_text_silent("<b>ATK+</b>: <b>" + battle.player_atk_plus + "</b> TURNS LEFT")
 			player_status_text("ATK+");
 		}
 	} else {
 		battle.player_atk = player.atk;
 	}
 	if (battle.player_def_plus > 0) {
-		output_text_silent("<b>DEF+</b>: <b>" + battle.player_def_plus + "</b> TURNS LEFT")
 		if (battle.player_def_plus == 1) {
+			output_text_silent("<b>DEF+</b>: <b>1</b> TURN LEFT")
 			player_status_text("<span" + colors.faded + ">DEF+</span>");
 		} else {
+			output_text_silent("<b>DEF+</b>: <b>" + battle.player_def_plus + "</b> TURNS LEFT")
 			player_status_text("DEF+");
 		}
 	}
 	if (battle.player_shield > 0) {
-		output_text_silent("<b>SHIELD</b>: <b>" + battle.player_shield + "</b> TURNS LEFT")
-		player_status_text("<span" + (battle.player_shield == 1 ? colors.heal_faded : colors.heal) + ">SHIELD</span>");
+		if (battle.player_shield == 1) {
+			output_text_silent("<b>SHIELD</b>: <b>1</b> TURN LEFT")
+			player_status_text("<span" + colors.heal_faded + ">SHIELD</span>");
+		} else {
+			output_text_silent("<b>SHIELD</b>: <b>" + battle.player_shield + "</b> TURNS LEFT")
+			player_status_text("<span" + colors.heal + ">SHIELD</span>");
+		}
 	}
 	battle.turn_count++;
 	output_text_silent("CURRENT TURN: <b>" + battle.turn_count + "</b>");

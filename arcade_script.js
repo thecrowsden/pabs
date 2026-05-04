@@ -26,13 +26,40 @@ const items = {
 	shield: 5,
 };
 
+const item_list = [
+	items.acorn,
+	items.fruit,
+	items.pizza,
+	items.atk,
+	items.def,
+	items.shield,
+];
+
 const item_names = {
-		0: "<b>ACORN</b>",
-		1: "<b>FRUIT</b>",
-		2: "<b>PIZZA</b>",
-		3: "<b>ATK+</b>",
-		4: "<b>DEF+</b>",
-		5: "<b>SHIELD</b>",
+		0: {
+			name: "acorn",
+			name_long: "ACORN",
+		},
+		1: {
+			name: "fruit",
+			name_long: "FRUIT",
+		},
+		2: {
+			name: "pizza",
+			name_long: "PIZZA",
+		},
+		3: {
+			name: "atk",
+			name_long: "ATK+",
+		},
+		4: {
+			name: "def",
+			name_long: "DEF+",
+		},
+		5: {
+			name: "shield",
+			name_long: "SHIELD",
+		},
 }
 
 const specials = {
@@ -55,6 +82,7 @@ const colors = {
 
 const div_list = [
 	"div_menu",
+	"div_stats",
 	"div_battle_win",
 	"div_battle_lose",
 	"div_battle_enemy",
@@ -68,6 +96,19 @@ const states = {
 	menu: {
 		bg_color: "black",
 		div_menu: true,
+		div_stats: false,
+		div_battle_win: false,
+		div_battle_lose: false,
+		div_battle_enemy: false,
+		div_battle_player: false,
+		div_battle_buttons: false,
+		div_battle_inv: false,
+		div_battle_textbox: false,
+	},
+	stats: {
+		bg_color: "black",
+		div_menu: false,
+		div_stats: true,
 		div_battle_win: false,
 		div_battle_lose: false,
 		div_battle_enemy: false,
@@ -79,6 +120,7 @@ const states = {
 	battle: {
 		bg_color: "!AREA",
 		div_menu: false,
+		div_stats: false,
 		div_battle_win: false,
 		div_battle_lose: false,
 		div_battle_enemy: true,
@@ -90,6 +132,7 @@ const states = {
 	battle_inv: {
 		bg_color: "!AREA",
 		div_menu: false,
+		div_stats: false,
 		div_battle_win: false,
 		div_battle_lose: false,
 		div_battle_enemy: true,
@@ -101,6 +144,7 @@ const states = {
 	battle_win: {
 		bg_color: "!AREA",
 		div_menu: false,
+		div_stats: false,
 		div_battle_win: true,
 		div_battle_lose: false,
 		div_battle_enemy: true,
@@ -112,6 +156,7 @@ const states = {
 	battle_lose: {
 		bg_color: "!AREA",
 		div_menu: false,
+		div_stats: false,
 		div_battle_win: false,
 		div_battle_lose: true,
 		div_battle_enemy: true,
@@ -201,9 +246,9 @@ let player = {
 	hp: 30,
 	atk: 4,
 	coins: 0,
-	crit: 10,
-	location: "wf",
 	inv: [0, 0, 0, 0, 0, 0,],
+	location: "wf",
+	crit: 10,
 };
 
 let battle = {
@@ -250,6 +295,72 @@ function change_state(new_state) {
 	display_update();
 }
 
+function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
+	switch (modified_stat) {
+		case stat_id.hp:
+			switch (stat_action) {
+				case stat_actions.min:
+					player.hp = 30;
+				break;
+				case stat_actions.minus:
+					player.hp -= 10;
+				break;
+				case stat_actions.plus:
+					player.hp += 10;
+				break;
+				case stat_actions.max:
+					player.hp = 300;
+				break;
+			}
+		break;
+		case stat_id.atk:
+			switch (stat_action) {
+				case stat_actions.min:
+					player.atk = 4;
+				break;
+				case stat_actions.minus:
+					player.atk -= 1;
+				break;
+				case stat_actions.plus:
+					player.atk += 1;
+				break;
+				case stat_actions.max:
+					player.atk = 30;
+				break;
+			}
+		break;
+		case stat_id.item:
+			switch (stat_action) {
+				case stat_actions.min:
+					player.inv[modified_item] = 0;
+				break;
+				case stat_actions.minus:
+					player.inv[modified_item] -= 1;
+				break;
+				case stat_actions.plus:
+					player.inv[modified_item] += 1;
+				break;
+				case stat_actions.max:
+					player.inv[modified_item] = 99;
+				break;
+			}
+		break;
+	}
+	display_update();
+}
+
+function min_stats() {
+	stat_edit(stat_id.hp, stat_actions.min);
+	stat_edit(stat_id.atk, stat_actions.min);
+	item_list.forEach((i) => stat_edit(stat_id.item, stat_actions.min, i));
+}
+
+function max_stats() {
+	stat_edit(stat_id.hp, stat_actions.max);
+	stat_edit(stat_id.atk, stat_actions.max);
+	item_list.forEach((i) => stat_edit(stat_id.item, stat_actions.max, i));
+}
+
 function clear_output_text() {
 	global_output_text = "";
 };
@@ -286,6 +397,24 @@ function player_status_text(newest_status) {
 
 function display_update() {
 	document.getElementById("text_stats_name").innerHTML = player.name_long;
+	document.getElementById("text_stats_coins").innerHTML = "COINS: <b>" + player.coins + "</b>";
+	document.getElementById("text_stats_hp").innerHTML = "HP: <b>" + player.hp + "</b>";
+	document.getElementById("btn_stats_hp_min").disabled = player.hp <= 30;
+	document.getElementById("btn_stats_hp_minus").disabled = player.hp <= 30;
+	document.getElementById("btn_stats_hp_plus").disabled = player.hp >= 300;
+	document.getElementById("btn_stats_hp_max").disabled = player.hp >= 300;
+	document.getElementById("text_stats_atk").innerHTML = "ATK: <b>" + player.atk + "</b>";
+	document.getElementById("btn_stats_atk_min").disabled = player.atk <= 4;
+	document.getElementById("btn_stats_atk_minus").disabled = player.atk <= 4;
+	document.getElementById("btn_stats_atk_plus").disabled = player.atk >= 30;
+	document.getElementById("btn_stats_atk_max").disabled = player.atk >= 30;
+	item_list.forEach((i) => {
+		document.getElementById("text_stats_inv_" + item_names[i].name).innerHTML = item_names[i].name_long + ": <b>" + player.inv[i] + "</b>";
+		document.getElementById("btn_stats_inv_" + item_names[i].name + "_min").disabled = player.inv[i] <= 0;
+		document.getElementById("btn_stats_inv_" + item_names[i].name + "_minus").disabled = player.inv[i] <= 0;
+		document.getElementById("btn_stats_inv_" + item_names[i].name + "_plus").disabled = player.inv[i] >= 99;
+		document.getElementById("btn_stats_inv_" + item_names[i].name + "_max").disabled = player.inv[i] >= 99;
+	});
 	
 	document.getElementById("text_enemy_name").innerHTML = battle.enemy.name_long;
 	document.getElementById("text_player_name").innerHTML = player.name_long;
@@ -370,7 +499,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 	change_state(states.battle);
 	clear_output_text();
 	let enemy_damaged = battle.player_atk;
-	let player_healed = 0;
+	let player_healed = player.hp;
 	let player_blocking = false;
 	let player_crit = false;
 	let player_damaged = battle.enemy.atk;
@@ -381,44 +510,50 @@ function turn_hander(player_action, used_item = items.acorn) {
 		battle.enemy_charging = false;
 	}
 	
-	if (player_action == actions.attack) {
-		output_text(player.name_short + " ATTACKED " + battle.enemy.name_long);
-		if (randbool(player.crit / 100)) {
-			player_crit = true;
-			enemy_damaged *= 3;
-			output_text("<b" + colors.crit + ">CRIT!</b>");
-		}
-		enemy_damaged = Math.round(enemy_damaged);
-		battle.enemy_hp -= enemy_damaged;
-		output_text(battle.enemy.name_long + " LOST <b><span" + (player_crit ? colors.crit : "") + ">" + enemy_damaged + "</span> HP</b>");
-	} else if (player_action == actions.block) {
-		player_blocking = true;
-		output_text(player.name_short + " BLOCKED");
-	} else if (player_action == actions.item) {
-		player.inv[used_item] -= 1;
-		output_text(player.name_short + " USED " + item_names[used_item]);
-		if (used_item == items.acorn) {
-			player_healed =  player.hp / 4;
-		} else if (used_item == items.fruit) {
-			player_healed =  player.hp / 2;
-		} else if (used_item == items.pizza) {
-			player_healed =  player.hp;
-		} else if (used_item == items.atk) {
-			battle.player_atk_plus = 6;
-			battle.player_atk = Math.round(player.atk * 1.5);
-		} else if (used_item == items.def) {
-			battle.player_def_plus = 6;
-		} else if (used_item == items.shield) {
-			battle.player_shield = 3;
-		}
-		if (player_healed > 0) {
-			player_healed = Math.round(player_healed);
-			battle.player_hp += player_healed;
-			if (battle.player_hp > player.hp) {
-				battle.player_hp = player.hp;
+	switch (player_action) {
+		case actions.attack:
+			output_text(player.name_short + " ATTACKED " + battle.enemy.name_long);
+			if (randbool(player.crit / 100)) {
+				player_crit = true;
+				enemy_damaged *= 3;
+				output_text("<b" + colors.crit + ">CRIT!</b>");
 			}
-			output_text(player.name_short + " GAINED <b><span" + colors.heal + ">" + player_healed + "</span> HP</b>");
-		}
+			enemy_damaged = Math.round(enemy_damaged);
+			battle.enemy_hp -= enemy_damaged;
+			output_text(battle.enemy.name_long + " LOST <b><span" + (player_crit ? colors.crit : "") + ">" + enemy_damaged + "</span> HP</b>");
+		break;
+		case actions.block:
+			player_blocking = true;
+			output_text(player.name_short + " BLOCKED");
+		break;
+		case actions.item:
+			player.inv[used_item] -= 1;
+			output_text(player.name_short + " USED <b>" + item_names[used_item].name_long + "</b>");
+			switch (used_item) {
+				case items.acorn:
+					player_healed /= 2;
+				case items.fruit:
+					player_healed /=2;
+				case items.pizza:
+					player_healed = Math.round(player_healed);
+					battle.player_hp += player_healed;
+					if (battle.player_hp > player.hp) {
+						battle.player_hp = player.hp;
+					}
+					output_text(player.name_short + " GAINED <b><span" + colors.heal + ">" + player_healed + "</span> HP</b>");
+				break;
+				case items.atk:
+					battle.player_atk_plus = 6;
+					battle.player_atk = Math.round(player.atk * 1.5);
+				break;
+				case items.def:
+					battle.player_def_plus = 6;
+				break;
+				case items.shield:
+					battle.player_shield = 3;
+				break;
+			}
+		break;
 	}
 	output_text_silent("");
 	
@@ -518,7 +653,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 	display_update();
 }
 
-function btn_battle_info() {
+function battle_info() {
 	clear_output_text();
 	output_text_silent("NAME: " + battle.enemy.name_long);
 	output_text_silent("LOCATION: <b>" + battle.enemy.location + "</b>");
@@ -531,22 +666,7 @@ function btn_battle_info() {
 	display_update();
 }
 
-function btn_stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
-}
-
 function btn_dev_load_battle() {
 	generate_enemy(player.location);
 	battle_reset();
-}
-
-function btn_dev_min_stats() {
-	player.hp = 30;
-	player.atk = 4;
-	player.inv = [0, 0, 0, 0, 0, 0,];
-}
-
-function btn_dev_max_stats() {
-	player.hp = 300;
-	player.atk = 30;
-	player.inv = [99, 99, 99, 99, 99, 99,];
 }

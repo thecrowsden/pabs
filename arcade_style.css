@@ -15,10 +15,6 @@ button.hook:disabled {background-color:black; color:red;}
 button.dig {color:dodgerblue;}
 button.dig:hover {background-color:dodgerblue; color:white;}
 button.dig:disabled {background-color:black; color:dodgerblue;}
-button:active {background-color:black;}
-button.jump:active {background-color:black; color:yellow;}
-button.hook:active {background-color:black; color:red;}
-button.dig:active {background-color:black; color:dodgerblue;}
 button.button_small {margin:0 0 0.5rem 0.5rem;}
 button.button_normal {margin:0.5rem 0 0; width:calc(var(--global-width) / 2 - 1rem); min-height:5rem;}
 button.button_wide {margin:0.5rem 0 0; width:calc(var(--global-width) - 1rem); min-height:5rem;}
@@ -41,6 +37,13 @@ div.button_column_right {display:inline-block;}
 .textbox {color:darkgray;}
 .color_plus {color:crimson;}
 .color_bonus_zone {color:violet;}
+
+@media (hover:hover) {
+	button:active {background-color:black;}
+	button.jump:active {background-color:black; color:yellow;}
+	button.hook:active {background-color:black; color:red;}
+	button.dig:active {background-color:black; color:dodgerblue;}
+}
 
 @media (max-width:30rem) {
 	button.button_normal {border-left-width:0; border-right-width:0; width:100vw;}

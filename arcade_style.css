@@ -3,19 +3,6 @@
 body {background-color:black; color:white; margin:0;}
 p {margin:0.5rem;}
 button {padding:0.25rem 0.5rem; text-align:center; border-width:0.25rem 0.5rem; border-style:solid; background-color:black; color:white; border-color:dimgray;}
-button:hover {background-color:dimgray; border-color:white;}
-button:disabled {background-color:black; color:dimgray;}
-button.qp {color:chartreuse;}
-button.jump {color:yellow;}
-button.jump:hover {background-color:yellow; color:white;}
-button.jump:disabled {background-color:black; color:yellow;}
-button.hook {color:red;}
-button.hook:hover {background-color:red; color:white;}
-button.hook:disabled {background-color:black; color:red;}
-button.dig {color:dodgerblue;}
-button.dig:hover {background-color:dodgerblue; color:white;}
-button.dig:disabled {background-color:black; color:dodgerblue;}
-button.button_small {margin:0 0 0.5rem 0.5rem;}
 button.button_normal {margin:0.5rem 0 0; width:calc(var(--global-width) / 2 - 1rem); min-height:5rem;}
 button.button_wide {margin:0.5rem 0 0; width:calc(var(--global-width) - 1rem); min-height:5rem;}
 div.box {margin:0.5rem auto 0; border-width:0.25rem 0.5rem; display:block; width:calc(var(--global-width) - 2rem); border-style:solid; background-color:black; border-color:dimgray;}
@@ -39,10 +26,38 @@ div.button_column_right {display:inline-block;}
 .color_bonus_zone {color:violet;}
 
 @media (hover:hover) {
+	button:hover {background-color:dimgray; border-color:white;}
+	button:disabled {background-color:black; color:dimgray;}
+	button.qp {color:chartreuse;}
+	button.jump {color:yellow;}
+	button.jump:hover {background-color:yellow; color:white;}
+	button.jump:disabled {background-color:black; color:yellow;}
+	button.hook {color:red;}
+	button.hook:hover {background-color:red; color:white;}
+	button.hook:disabled {background-color:black; color:red;}
+	button.dig {color:dodgerblue;}
+	button.dig:hover {background-color:dodgerblue; color:white;}
+	button.dig:disabled {background-color:black; color:dodgerblue;}
+	button.button_small {margin:0 0 0.5rem 0.5rem;}
 	button:active {background-color:black;}
 	button.jump:active {background-color:black; color:yellow;}
 	button.hook:active {background-color:black; color:red;}
 	button.dig:active {background-color:black; color:dodgerblue;}
+}
+
+@media (hover:none) {
+	button:disabled {background-color:black; color:dimgray;}
+	button.qp {color:chartreuse;}
+	button.jump {color:yellow;}
+	button.jump:disabled {background-color:black; color:yellow;}
+	button.hook {color:red;}
+	button.hook:disabled {background-color:black; color:red;}
+	button.dig {color:dodgerblue;}
+	button.dig:disabled {background-color:black; color:dodgerblue;}
+	button:active {background-color:dimgray; border-color:white;}
+	button.jump:active {background-color:yellow; color:white;}
+	button.hook:active {background-color:red; color:white;}
+	button.dig:active {background-color:dodgerblue; color:white;}
 }
 
 @media (max-width:30rem) {

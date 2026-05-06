@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!--by The Crow's Den-->
+
 <head>
 	<meta charset="UTF-8">
 	<title>POPGOES Arcade Battle Sim</title>
@@ -9,7 +11,7 @@
 	<script src="./arcade_script.js"></script>
 </head>
 
-<body onLoad="change_state(states.menu)">
+<body onLoad="body_onload()">
 	<div class="box box_title">
 		<p><b>POPGOES ARCADE BATTLE SIM</b></p>
 	</div>
@@ -35,28 +37,54 @@
 				<div></div>
 				<button type="button" class="button_normal" onclick="select_forest(location_id.nfp)">NORTH FOREST<span class="color_plus">+</span></button>
 			</div>
+			<div></div>
+			<button type="button" class="button_wide" onclick="select_forest(location_id.bonus)"><span class="color_bonus_zone">BONUS</span></button>
 		</div>
 	</div>
 	<div id="div_stats">
 		<div class="button_zone">
 			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
+			<div></div>
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="min_stats()">ALL MIN</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="max_stats()">ALL MAX</button>
+			</div>
+			<!--
+			<div></div>
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="change_state(states.menu)">BACK</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="min_stats()">ALL MIN</button>
+			</div>
+			<div></div>
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="max_stats()">DEAD FOREST MAX</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="">MACHINIST MAX</button>
+			</div>
+			-->
 		</div>
 		<div class="box">
 			<p id="text_stats_name">error: text_stats_name</p>
 			<p id="text_stats_coins">error: text_stats_coins</p>
+			<p>STATS:</p>
 			<div class="button_zone_left">
 				<button type="button" id="btn_stats_hp_min" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.min)">MIN</button>
 				<button type="button" id="btn_stats_hp_minus" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.minus)">-</button>
 				<button type="button" id="btn_stats_hp_plus" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.plus)">+</button>
 				<button type="button" id="btn_stats_hp_max" class="button_small" onclick="stat_edit(stat_id.hp, stat_actions.max)">MAX</button>
-				<p id="text_stats_hp">error: text_stats_hp</p>
+				<p id="text_stats_hp" class="topless">error: text_stats_hp</p>
 			</div>
 			<div class="button_zone_left">
 				<button type="button" id="btn_stats_atk_min" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.min)">MIN</button>
 				<button type="button" id="btn_stats_atk_minus" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.minus)">-</button>
 				<button type="button" id="btn_stats_atk_plus" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.plus)">+</button>
 				<button type="button" id="btn_stats_atk_max" class="button_small" onclick="stat_edit(stat_id.atk, stat_actions.max)">MAX</button>
-				<p id="text_stats_atk">error: text_stats_atk</p>
+				<p id="text_stats_atk" class="topless">error: text_stats_atk</p>
 			</div>
 			<p class="topless">ITEMS:</p>
 			<div class="button_zone_left">
@@ -64,99 +92,134 @@
 				<button type="button" id="btn_stats_inv_acorn_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.acorn)">-</button>
 				<button type="button" id="btn_stats_inv_acorn_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.acorn)">+</button>
 				<button type="button" id="btn_stats_inv_acorn_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.acorn)">MAX</button>
-				<p id="text_stats_inv_acorn">error: text_stats_inv_acorn</p>
+				<p id="text_stats_inv_acorn" class="topless">error: text_stats_inv_acorn</p>
 			</div>
 			<div class="button_zone_left">
 				<button type="button" id="btn_stats_inv_fruit_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.fruit)">MIN</button>
 				<button type="button" id="btn_stats_inv_fruit_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.fruit)">-</button>
 				<button type="button" id="btn_stats_inv_fruit_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.fruit)">+</button>
 				<button type="button" id="btn_stats_inv_fruit_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.fruit)">MAX</button>
-				<p id="text_stats_inv_fruit">error: text_stats_inv_fruit</p>
+				<p id="text_stats_inv_fruit" class="topless">error: text_stats_inv_fruit</p>
 			</div>
 			<div class="button_zone_left">
 				<button type="button" id="btn_stats_inv_pizza_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.pizza)">MIN</button>
 				<button type="button" id="btn_stats_inv_pizza_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.pizza)">-</button>
 				<button type="button" id="btn_stats_inv_pizza_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.pizza)">+</button>
 				<button type="button" id="btn_stats_inv_pizza_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.pizza)">MAX</button>
-				<p id="text_stats_inv_pizza">error: text_stats_inv_pizza</p>
+				<p id="text_stats_inv_pizza" class="topless">error: text_stats_inv_pizza</p>
 			</div>
 			<div class="button_zone_left">
 				<button type="button" id="btn_stats_inv_atk_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.atk)">MIN</button>
 				<button type="button" id="btn_stats_inv_atk_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.atk)">-</button>
 				<button type="button" id="btn_stats_inv_atk_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.atk)">+</button>
 				<button type="button" id="btn_stats_inv_atk_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.atk)">MAX</button>
-				<p id="text_stats_inv_atk">error: text_stats_inv_atk</p>
+				<p id="text_stats_inv_atk" class="topless">error: text_stats_inv_atk</p>
 			</div>
 			<div class="button_zone_left">
 				<button type="button" id="btn_stats_inv_def_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.def)">MIN</button>
 				<button type="button" id="btn_stats_inv_def_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.def)">-</button>
 				<button type="button" id="btn_stats_inv_def_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.def)">+</button>
 				<button type="button" id="btn_stats_inv_def_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.def)">MAX</button>
-				<p id="text_stats_inv_def">error: text_stats_inv_def</p>
+				<p id="text_stats_inv_def" class="topless">error: text_stats_inv_def</p>
 			</div>
 			<div class="button_zone_left">
 				<button type="button" id="btn_stats_inv_shield_min" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.min, items.shield)">MIN</button>
 				<button type="button" id="btn_stats_inv_shield_minus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.minus, items.shield)">-</button>
 				<button type="button" id="btn_stats_inv_shield_plus" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.plus, items.shield)">+</button>
 				<button type="button" id="btn_stats_inv_shield_max" class="button_small" onclick="stat_edit(stat_id.item, stat_actions.max, items.shield)">MAX</button>
-				<p id="text_stats_inv_shield">error: text_stats_inv_shield</p>
+				<p id="text_stats_inv_shield" class="topless">error: text_stats_inv_shield</p>
 			</div>
-		</div>
-		<div class="button_zone">
-			<div class="button_column">
-				<button type="button" class="button_normal" onclick="min_stats()">ALL MIN</button>
+			<p class="topless">ABILITIES:</p>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_jump_off" class="button_small" onclick="stat_edit(stat_id.jump, stat_actions.off)">OFF</button>
+				<button type="button" id="btn_stats_jump_on" class="button_small" onclick="stat_edit(stat_id.jump, stat_actions.on)">ON</button>
+				<p id="text_stats_jump" class="topless">error: text_stats_jump</p>
 			</div>
-			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="max_stats()">ALL MAX</button>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_hook_off" class="button_small" onclick="stat_edit(stat_id.hook, stat_actions.off)">OFF</button>
+				<button type="button" id="btn_stats_hook_on" class="button_small" onclick="stat_edit(stat_id.hook, stat_actions.on)">ON</button>
+				<p id="text_stats_hook" class="topless">error: text_stats_hook</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_dig_off" class="button_small" onclick="stat_edit(stat_id.dig, stat_actions.off)">OFF</button>
+				<button type="button" id="btn_stats_dig_on" class="button_small" onclick="stat_edit(stat_id.dig, stat_actions.on)">ON</button>
+				<p id="text_stats_dig" class="topless">error: text_stats_dig</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_qp_off" class="button_small" onclick="stat_edit(stat_id.qp, stat_actions.off)">OFF</button>
+				<button type="button" id="btn_stats_qp_on" class="button_small" onclick="stat_edit(stat_id.qp, stat_actions.on)">ON</button>
+				<p id="text_stats_qp" class="topless">error: text_stats_qp</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_spiky_off" class="button_small" onclick="stat_edit(stat_id.spiky, stat_actions.off)">OFF</button>
+				<button type="button" id="btn_stats_spiky_on" class="button_small" onclick="stat_edit(stat_id.spiky, stat_actions.on)">ON</button>
+				<p id="text_stats_spiky" class="topless">error: text_stats_spiky</p>
+			</div>
+			<p class="topless">CHEATS:</p>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_cheat_menu_off" class="button_small" onclick="stat_edit(stat_id.cheat_menu, stat_actions.off)">OFF</button>
+				<button type="button" id="btn_stats_cheat_menu_on" class="button_small" onclick="stat_edit(stat_id.cheat_menu, stat_actions.on)">ON</button>
+				<p id="text_stats_cheat_menu" class="topless">error: text_stats_cheat_menu</p>
 			</div>
 		</div>
 	</div>
-	<div id="div_forest_main">
+	<div id="div_forest">
 		<div class="button_zone">
-			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
-			<div></div>
-			<button type="button" class="button_wide" onclick="generate_enemy(player.location)">RANDOM</button>
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="change_state(states.menu)">BACK</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="start_battle_from_location(player.location)">RANDOM</button>
+			</div>
 			<div></div>
 			<div class="button_column">
-				<button type="button" id="btn_enemy_0" class="button_normal not_bold" onclick="start_battle(0)"></button>
+				<button type="button" id="btn_enemy_0" class="button_normal" onclick="start_battle_from_index(0)">error: btn_enemy_0</button>
 				<div></div>
-				<button type="button" id="btn_enemy_2" class="button_normal not_bold" onclick="start_battle(2)"></button>
-				<div id="div_forest_north_4">
+				<button type="button" id="btn_enemy_2" class="button_normal" onclick="start_battle_from_index(2)">error: btn_enemy_2</button>
+				<div id="div_forest_4">
 					<div></div>
-					<button type="button" id="btn_enemy_4" class="button_normal not_bold" onclick="start_battle(4)"></button>
+					<button type="button" id="btn_enemy_4" class="button_normal" onclick="start_battle_from_index(4)">error: btn_enemy_4</button>
 				</div>
 			</div>
 			<div class="button_column_right">
-				<button type="button" id="btn_enemy_1" class="button_normal not_bold" onclick="start_battle(1)"></button>
+				<button type="button" id="btn_enemy_1" class="button_normal" onclick="start_battle_from_index(1)">error: btn_enemy_1</button>
 				<div></div>
-				<button type="button" id="btn_enemy_3" class="button_normal not_bold" onclick="start_battle(3)"></button>
-				<div id="div_forest_north_5">
+				<button type="button" id="btn_enemy_3" class="button_normal" onclick="start_battle_from_index(3)">error: btn_enemy_3</button>
+				<div id="div_forest_5">
 					<div></div>
-					<button type="button" id="btn_enemy_5" class="button_normal not_bold" onclick="start_battle(5)"></button>
+					<button type="button" id="btn_enemy_5" class="button_normal" onclick="start_battle_from_index(5)">error: btn_enemy_5</button>
 				</div>
 			</div>
-			<!--
 			<div></div>
-			<button type="button" class="button_wide" onclick="">7</button>
-			-->
+			<button type="button" id="btn_enemy_boss" class="button_wide" onclick="start_battle_from_location_boss(player.location)">error: btn_enemy_boss</button>
 		</div>
 	</div>
-	<div id="div_battle_win">
-		<div class="button_zone">
-			<button type="button" class="button_wide" onclick="select_forest(player.location)">BACK</button>
-		</div>
-	</div>
-	<div id="div_battle_lose">
-		<div class="button_zone">
-			<div class="button_column">
-				<button type="button" class="button_normal" onclick="select_forest(player.location)">BACK</button>
-			</div>
-			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="battle_reset()">RETRY</button>
+	<div id="div_battle">
+		<div id="div_battle_button_info">
+			<div class="button_zone">
+				<div class="button_column">
+					<button type="button" class="button_normal" onclick="select_forest(player.location)">ESCAPE</button>
+				</div>
+				<div class="button_column_right">
+					<button type="button" class="button_normal" onclick="battle_info()">INFO</button>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div id="div_battle_enemy">
+		<div id="div_battle_win">
+			<div class="button_zone">
+				<button type="button" class="button_wide" onclick="select_forest(player.location)">BACK</button>
+			</div>
+		</div>
+		<div id="div_battle_lose">
+			<div class="button_zone">
+				<div class="button_column">
+					<button type="button" class="button_normal" onclick="select_forest(player.location)">BACK</button>
+				</div>
+				<div class="button_column_right">
+					<button type="button" class="button_normal" onclick="battle_reset()">RETRY</button>
+				</div>
+			</div>
+		</div>
 		<div class="box">
 			<div class="inline_zone">
 				<p id="text_enemy_atk" class="inline_right">error: text_enemy_atk</p>
@@ -167,12 +230,19 @@
 				</div>
 			</div>
 			<div class="inline_zone">
-				<p id="text_enemy_status" class="inline_right">error: text_enemy_status</p>
-				<p id="text_enemy_hp" class="inline_left">error: text_enemy_hp</p>
+				<p id="text_enemy_status" class="inline_right whitespace">error: text_enemy_status</p>
+				<p id="text_enemy_hp" class="inline_left whitespace">error: text_enemy_hp</p>
+			</div>
+			<div id="div_battle_dkf">
+				<div class="button_zone_left">
+					<button type="button" id="btn_stats_laser_never" class="button_small" onclick="stat_edit(stat_id.laser, stat_actions.never)">NONE</button>
+					<button type="button" id="btn_stats_laser_purple" class="button_small" onclick="stat_edit(stat_id.laser, stat_actions.purple)">PURPLE</button>
+					<button type="button" id="btn_stats_laser_random" class="button_small" onclick="stat_edit(stat_id.laser, stat_actions.random)">RANDOM</button>
+					<button type="button" id="btn_stats_laser_yellow" class="button_small" onclick="stat_edit(stat_id.laser, stat_actions.yellow)">YELLOW</button>
+					<p id="text_stats_laser" class="topless">error: text_stats_laser</p>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div id="div_battle_player">
 		<div class="box">
 			<div class="inline_zone">
 				<p id="text_player_atk" class="inline_right">error: text_player_atk</p>
@@ -183,58 +253,77 @@
 				</div>
 			</div>
 			<div class="inline_zone">
-				<p id="text_player_status" class="inline_right">error: text_player_status</p>
-				<p id="text_player_hp" class="inline_left">error: text_player_hp</p>
+				<p id="text_player_status" class="inline_right whitespace">error: text_player_status</p>
+				<p id="text_player_hp" class="inline_left whitespace">error: text_player_hp</p>
 			</div>
 		</div>
-	</div>
-	<div id="div_battle_buttons">
-		<div class="button_zone">
-			<div class="button_column">
-				<button type="button" class="button_normal" onclick="turn_hander(actions.attack)">ATTACK</button>
-				<div></div>
-				<button type="button" class="button_normal" onclick="turn_hander(actions.block)">BLOCK</button>
-				<div></div>
-				<button type="button" class="button_normal" onclick="change_state(states.battle_inv)">ITEMS</button>
-				<div></div>
-				<button type="button" class="button_normal" onclick="" disabled>GIFT</button>
-			</div>
-			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="" disabled>JUMP</button>
-				<div></div>
-				<button type="button" class="button_normal" onclick="" disabled>HOOK</button>
-				<div></div>
-				<button type="button" class="button_normal" onclick="" disabled>DIG</button>
-				<div></div>
-				<button type="button" class="button_normal" onclick="select_forest(player.location)">ESCAPE</button>
-			</div>
-			<div></div>
-			<button type="button" class="button_wide" onclick="battle_info()">INFO</button>
-		</div>
-	</div>
-	<div id="div_battle_inv">
-		<div class="button_zone">
-			<button type="button" class="button_wide" onclick="change_state(states.battle)">BACK</button>
-			<div></div>
-			<div class="button_column">
-				<button type="button" id="btn_battle_inv_acorn" class="button_normal" onclick="turn_hander(actions.item, items.acorn)" disabled>error: btn_battle_inv_acorn</button>
-				<div></div>
-				<button type="button" id="btn_battle_inv_fruit" class="button_normal" onclick="turn_hander(actions.item, items.fruit)" disabled>error: btn_battle_inv_fruit</button>
-				<div></div>
-				<button type="button" id="btn_battle_inv_pizza" class="button_normal" onclick="turn_hander(actions.item, items.pizza)" disabled>error: btn_battle_inv_pizza</button>
-			</div>
-			<div class="button_column_right">
-				<button type="button" id="btn_battle_inv_atk" class="button_normal" onclick="turn_hander(actions.item, items.atk)" disabled>error: btn_battle_inv_atk</button>
-				<div></div>
-				<button type="button" id="btn_battle_inv_def" class="button_normal" onclick="turn_hander(actions.item, items.def)" disabled>error: btn_battle_inv_def</button>
-				<div></div>
-				<button type="button" id="btn_battle_inv_shield" class="button_normal" onclick="turn_hander(actions.item, items.shield)" disabled>error: btn_battle_inv_shield</button>
+		<div id="div_battle_buttons">
+			<div class="button_zone">
+				<div class="button_column">
+					<button type="button" class="button_normal" onclick="turn_hander(actions.attack)">ATTACK</button>
+					<div></div>
+					<button type="button" class="button_normal" onclick="turn_hander(actions.block)">BLOCK</button>
+					<div></div>
+					<button type="button" id="btn_battle_items" class="button_normal" onclick="change_state(states.battle_inv)">ITEMS</button>
+					<div></div>
+					<p class="invisible">error: this space intentionally left blank</p>
+				</div>
+				<div class="button_column_right">
+					<button type="button" id="btn_battle_jump" class="button_normal" onclick="turn_hander(actions.jump)">error: btn_battle_jump</button>
+					<div></div>
+					<button type="button" id="btn_battle_hook" class="button_normal" onclick="turn_hander(actions.hook)">error: btn_battle_hook</button>
+					<div></div>
+					<button type="button" id="btn_battle_dig" class="button_normal" onclick="turn_hander(actions.dig)">error: btn_battle_dig</button>
+					<div></div>
+					<p class="invisible">error: this space intentionally left blank</p>
+				</div>
 			</div>
 		</div>
-	</div> 
-	<div id="div_battle_textbox">
+		<div id="div_battle_inv">
+			<div class="button_zone">
+				<button type="button" class="button_wide" onclick="change_state(states.battle)">BACK</button>
+				<div></div>
+				<div class="button_column">
+					<button type="button" id="btn_battle_inv_acorn" class="button_normal" onclick="turn_hander(actions.item, items.acorn)">error: btn_battle_inv_acorn</button>
+					<div></div>
+					<button type="button" id="btn_battle_inv_fruit" class="button_normal" onclick="turn_hander(actions.item, items.fruit)">error: btn_battle_inv_fruit</button>
+					<div></div>
+					<button type="button" id="btn_battle_inv_pizza" class="button_normal" onclick="turn_hander(actions.item, items.pizza)">error: btn_battle_inv_pizza</button>
+				</div>
+				<div class="button_column_right">
+					<button type="button" id="btn_battle_inv_atk" class="button_normal" onclick="turn_hander(actions.item, items.atk)">error: btn_battle_inv_atk</button>
+					<div></div>
+					<button type="button" id="btn_battle_inv_def" class="button_normal" onclick="turn_hander(actions.item, items.def)">error: btn_battle_inv_def</button>
+					<div></div>
+					<button type="button" id="btn_battle_inv_shield" class="button_normal" onclick="turn_hander(actions.item, items.shield)">error: btn_battle_inv_shield</button>
+				</div>
+			</div>
+		</div>
 		<div class="box">
-			<p id="text_output">error: text_output</p>
+			<p id="text_output" class="textbox">error: text_output</p>
+		</div>
+	</div>
+	<div id="div_cheats">
+		<div class="box">
+			<p>CHEATS:</p>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_cheat_player_crit_never" class="button_small" onclick="stat_edit(stat_id.cheat_player_crit, stat_actions.never)">NEVER</button>
+				<button type="button" id="btn_stats_cheat_player_crit_random" class="button_small" onclick="stat_edit(stat_id.cheat_player_crit, stat_actions.random)">RANDOM</button>
+				<button type="button" id="btn_stats_cheat_player_crit_always" class="button_small" onclick="stat_edit(stat_id.cheat_player_crit, stat_actions.always)">ALWAYS</button>
+				<p id="text_stats_cheat_player_crit" class="topless">error: text_stats_cheat_player_crit</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_cheat_enemy_crit_never" class="button_small" onclick="stat_edit(stat_id.cheat_enemy_crit, stat_actions.never)">NEVER</button>
+				<button type="button" id="btn_stats_cheat_enemy_crit_random" class="button_small" onclick="stat_edit(stat_id.cheat_enemy_crit, stat_actions.random)">RANDOM</button>
+				<button type="button" id="btn_stats_cheat_enemy_crit_always" class="button_small" onclick="stat_edit(stat_id.cheat_enemy_crit, stat_actions.always)">ALWAYS</button>
+				<p id="text_stats_cheat_enemy_crit" class="topless">error: text_stats_cheat_enemy_crit</p>
+			</div>
+			<div class="button_zone_left">
+				<button type="button" id="btn_stats_cheat_enemy_miss_never" class="button_small" onclick="stat_edit(stat_id.cheat_enemy_miss, stat_actions.never)">NEVER</button>
+				<button type="button" id="btn_stats_cheat_enemy_miss_random" class="button_small" onclick="stat_edit(stat_id.cheat_enemy_miss, stat_actions.random)">RANDOM</button>
+				<button type="button" id="btn_stats_cheat_enemy_miss_always" class="button_small" onclick="stat_edit(stat_id.cheat_enemy_miss, stat_actions.always)">ALWAYS</button>
+				<p id="text_stats_cheat_enemy_miss" class="topless">error: text_stats_cheat_enemy_miss</p>
+			</div>
 		</div>
 	</div>
 </body>

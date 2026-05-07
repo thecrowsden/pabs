@@ -1662,7 +1662,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 					}
 					player_damaged = Math.round(player_damaged * 3 / 2);
 					battle.player_hp -= player_damaged;
-					output_text(color(player.name_short) + " LOST " + color(player_damaged, player_damage_color) + color(" HP"));
+					output_text(color(player.name_short) + " LOST " + color(player_damaged, colors.crit) + color(" HP"));
 				} else {
 					output_text(color("SHIELD!", colors.heal));
 					if (player.spiky) {

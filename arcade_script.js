@@ -901,10 +901,10 @@ const enemies = {
 		name: "GOD",
 		name_long: "GOD",
 		location: color("BONUS", colors.bonus_zone),
-		hp: 100000,
-		atk: 1000,
-		crit: 100,
-		miss: 0,
+		hp: 1000000,
+		atk: 175000,
+		crit: 75,
+		miss: 25,
 		spawn: 0,
 		reward: 0,
 		weight: 0,
@@ -912,7 +912,6 @@ const enemies = {
 			specials.fake,
 			specials.boss,
 			specials.bonnie,
-			specials.dkf,
 		],
 	},
 };
@@ -1659,6 +1658,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 					output_text(color(battle.enemy.name_long) + " BROKE " + color("SHIELD", colors.heal));
 					if (player_blocking) {
 						player_damaged /= 2;
+						//output_text(color("BLOCK!"));
 					}
 					player_damaged = Math.round(player_damaged * 3 / 2);
 					battle.player_hp -= player_damaged;

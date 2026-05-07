@@ -901,7 +901,7 @@ const enemies = {
 		name: "GOD",
 		name_long: "GOD",
 		location: color("BONUS", colors.bonus_zone),
-		hp: 79999,
+		hp: 49999,
 		atk: 399,
 		crit: 50,
 		miss: 0,

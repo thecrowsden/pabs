@@ -223,7 +223,7 @@ const colors = {
 };
 
 function color(input_string, input_color = colors.normal) {
-	return "<span style='color:" + input_color + ";'>" + input_string + "</span>";
+	return "<span style='color: " + input_color + ";'>" + input_string + "</span>";
 }
 
 const div_list = [
@@ -348,7 +348,9 @@ const enemies = {
 		spawn: 0.8,
 		reward: 150,
 		weight: 1,
-		special: [			specials.gilded,		],
+		special: [
+			specials.gilded,
+		],
 	},
 	c_chica: {
 		name: "CORRUPT CHICA",
@@ -416,7 +418,9 @@ const enemies = {
 		spawn: 0.8,
 		reward: 150,
 		weight: 1,
-		special: [			specials.gilded,		],
+		special: [
+			specials.gilded,
+		],
 	},
 	c_foxy: {
 		name: "CORRUPT FOXY",
@@ -484,7 +488,9 @@ const enemies = {
 		spawn: 0.8,
 		reward: 150,
 		weight: 1,
-		special: [			specials.gilded,		],
+		special: [
+			specials.gilded,
+		],
 	},
 	c_bonnie: {
 		name: "CORRUPT BONNIE",
@@ -552,7 +558,9 @@ const enemies = {
 		spawn: 0.8,
 		reward: 150,
 		weight: 1,
-		special: [			specials.gilded,		],
+		special: [
+			specials.gilded,
+		],
 	},
 	gd_boar: {
 		name: "GILDED DEAD BOAR",
@@ -565,7 +573,9 @@ const enemies = {
 		spawn: 0.8,
 		reward: 150,
 		weight: 1,
-		special: [			specials.gilded,		],
+		special: [
+			specials.gilded,
+		],
 	},
 	gd_owl: {
 		name: "GILDED DEAD OWL",
@@ -578,7 +588,9 @@ const enemies = {
 		spawn: 0.8,
 		reward: 150,
 		weight: 1,
-		special: [			specials.gilded,		],
+		special: [
+			specials.gilded,
+		],
 	},
 	c_bb: {
 		name: "CORRUPT BB",
@@ -622,7 +634,9 @@ const enemies = {
 		spawn: 33,
 		reward: 15,
 		weight: 40,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	cp_hedgehog: {
 		name: "CORRUPT HEDGEHOG+",
@@ -635,7 +649,9 @@ const enemies = {
 		spawn: 17,
 		reward: 25,
 		weight: 19,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	d_chica: {
 		name: "DEAD CHICA",
@@ -664,7 +680,9 @@ const enemies = {
 		spawn: 50,
 		reward: 15,
 		weight: 60,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	cp_cat: {
 		name: "CORRUPT CAT+",
@@ -677,7 +695,9 @@ const enemies = {
 		spawn: 33,
 		reward: 20,
 		weight: 40,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	cp_woodpecker: {
 		name: "CORRUPT WOODPECKER+",
@@ -690,7 +710,9 @@ const enemies = {
 		spawn: 17,
 		reward: 30,
 		weight: 19,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	d_foxy: {
 		name: "DEAD FOXY",
@@ -719,7 +741,9 @@ const enemies = {
 		spawn: 50,
 		reward: 20,
 		weight: 60,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	cp_beaver: {
 		name: "CORRUPT BEAVER+",
@@ -732,7 +756,9 @@ const enemies = {
 		spawn: 33,
 		reward: 25,
 		weight: 40,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	cp_wolf: {
 		name: "CORRUPT WOLF+",
@@ -745,7 +771,9 @@ const enemies = {
 		spawn: 17,
 		reward: 35,
 		weight: 19,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	d_bonnie: {
 		name: "DEAD BONNIE",
@@ -774,7 +802,9 @@ const enemies = {
 		spawn: 33,
 		reward: 25,
 		weight: 33,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	dp_boar: {
 		name: "DEAD BOAR+",
@@ -787,7 +817,9 @@ const enemies = {
 		spawn: 33,
 		reward: 25,
 		weight: 32,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	dp_owl: {
 		name: "DEAD OWL+",
@@ -800,7 +832,9 @@ const enemies = {
 		spawn: 33,
 		reward: 25,
 		weight: 32,
-		special: [			specials.plus,		],
+		special: [
+			specials.plus,
+		],
 	},
 	dkf: {
 		name: "DEAD KING FREDDY",
@@ -1410,9 +1444,9 @@ function battle_reset() {
 	output_text("ENCOUNTERED " + color(battle.enemy.name_long));
 	output_text_silent("");
 	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
-		output_text_silent("BOSS ACTION IN " + color(3) + " TURNS");
+		output_text_silent("BOSS TIMER: " + color("1"));
 	}
-	output_text_silent("CURRENT TURN: " + color("1"));
+	output_text_silent("NEXT TURN: " + color("1"));
 	display_update();
 }
 
@@ -1472,31 +1506,36 @@ function turn_hander(player_action, used_item = items.acorn) {
 	switch (player_action) {
 		case actions.attack:
 			output_text(color(player.name_short) + " ATTACKED");
-			if (active_laser == laser_states.purple) {
-				output_text(color("REFLECT!", colors.reflect));
-				enemy_damaged *= 2;
-			}
-			if (active_laser == laser_states.yellow) {
-				output_text(color("BONUS!", colors.bonus));
-				enemy_damaged *= 1.5;
-			}
-			let player_crit = false;
-			if (
-				cheats.cheat_player_crit != cheat_states.never
-				&&
-				(randbool(0.1) || cheats.cheat_player_crit == cheat_states.always)
-			) {
-				player_crit = true;
-				enemy_damaged *= 3;
-				output_text(color("CRIT!", colors.crit));
-			}
-			enemy_damaged = Math.round(enemy_damaged);
-			if (active_laser == laser_states.purple) {
-				battle.player_hp -= enemy_damaged;
-				output_text(color(player.name_short) + " LOST " + color(enemy_damaged, player_crit ? colors.crit : colors.normal) + color(" HP"));
+			if (battle.enemy.special.includes(specials.chica) && battle.enemy_boss_count >= 3) {
+				battle.enemy_boss_count = 0;
+				output_text(color("JUMP!", colors.jump));
 			} else {
-				battle.enemy_hp -= enemy_damaged;
-				output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, player_crit ? colors.crit : colors.normal) + color(" HP"));
+				if (active_laser == laser_states.purple) {
+					output_text(color("REFLECT!", colors.reflect));
+					enemy_damaged *= 2;
+				}
+				if (active_laser == laser_states.yellow) {
+					output_text(color("BONUS!", colors.bonus));
+					enemy_damaged *= 1.5;
+				}
+				let player_crit = false;
+				if (
+					cheats.cheat_player_crit != cheat_states.never
+					&&
+					(randbool(0.1) || cheats.cheat_player_crit == cheat_states.always)
+				) {
+					player_crit = true;
+					enemy_damaged *= 3;
+					output_text(color("CRIT!", colors.crit));
+				}
+				enemy_damaged = Math.round(enemy_damaged);
+				if (active_laser == laser_states.purple) {
+					battle.player_hp -= enemy_damaged;
+					output_text(color(player.name_short) + " LOST " + color(enemy_damaged, player_crit ? colors.crit : colors.normal) + color(" HP"));
+				} else {
+					battle.enemy_hp -= enemy_damaged;
+					output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, player_crit ? colors.crit : colors.normal) + color(" HP"));
+				}
 			}
 		break;
 		case actions.block:
@@ -1510,31 +1549,38 @@ function turn_hander(player_action, used_item = items.acorn) {
 		break;
 		case actions.jump:
 			battle.player_jump = 0;
-			output_text(color(player.name_short) + color(" JUMPED", colors.jump));
+			output_text(color(player.name_short) + " USED " + color(" JUMP", colors.jump));
 		break;
 		case actions.hook:
 			battle.player_hook = 0;
-			if (active_laser == laser_states.purple) {
-				output_text(color("REFLECT!", colors.reflect));
-				enemy_damaged *= 2;
-			}
-			if (active_laser == laser_states.yellow) {
-				output_text(color("BONUS!", colors.bonus));
-				enemy_damaged *= 1.5;
-			}
-			output_text(color("HOOK!", colors.hook));
-			enemy_damaged *= 3;
-			enemy_damaged = Math.round(enemy_damaged);
-			if (active_laser == laser_states.purple) {
-				battle.player_hp -= enemy_damaged;
-				output_text(color(player.name_short) + " LOST " + color(enemy_damaged, colors.hook) + color(" HP"));
+			output_text(color(player.name_short) + " USED " + color(" HOOK", colors.hook));
+			if (battle.enemy.special.includes(specials.chica) && battle.enemy_boss_count >= 3) {
+				battle.enemy_boss_count = 0;
+				output_text(color("JUMP!", colors.jump));
 			} else {
-				battle.enemy_hp -= enemy_damaged;
-				output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, colors.hook) + color(" HP"));
+				if (active_laser == laser_states.purple) {
+					output_text(color("REFLECT!", colors.reflect));
+					enemy_damaged *= 2;
+				}
+				if (active_laser == laser_states.yellow) {
+					output_text(color("BONUS!", colors.bonus));
+					enemy_damaged *= 1.5;
+				}
+				output_text(color("HOOK!", colors.hook));
+				enemy_damaged *= 3;
+				enemy_damaged = Math.round(enemy_damaged);
+				if (active_laser == laser_states.purple) {
+					battle.player_hp -= enemy_damaged;
+					output_text(color(player.name_short) + " LOST " + color(enemy_damaged, colors.hook) + color(" HP"));
+				} else {
+					battle.enemy_hp -= enemy_damaged;
+					output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, colors.hook) + color(" HP"));
+				}
 			}
 		break;
 		case actions.dig:
 			battle.player_dig = 0;
+			output_text(color(player.name_short) + " USED " + color(" DIG", colors.dig));
 			output_text(color("DIG!", colors.dig));
 			let dig_item = items.acorn;
 			let item_index = Math.random() * 100;
@@ -1564,8 +1610,17 @@ function turn_hander(player_action, used_item = items.acorn) {
 		turn_win();
 	} else if (!qp_turn) {
 		output_text_silent("");
-		if (
-			!enemy_charged
+		if (battle.enemy.special.includes(specials.bonnie) && battle.enemy_boss_count >= 3 && !enemy_charged) {
+			battle.enemy_boss_count = 0;
+			output_text(color("DIG!", colors.dig));
+			let enemy_healed = Math.round(battle.enemy.hp / 4);
+			battle.enemy_hp += enemy_healed;
+			if (battle.enemy_hp > battle.enemy.hp) {
+				battle.enemy_hp = battle.enemy.hp;
+			}
+			output_text(color(battle.enemy.name_long) + " GAINED " + color(enemy_healed, colors.heal) + color(" HP"));
+		} else if (
+			!enemy_charged && !enemy_hook
 			&&
 			battle.enemy.crit > 0
 			&&
@@ -1578,15 +1633,6 @@ function turn_hander(player_action, used_item = items.acorn) {
 			if (player_action == actions.jump) {
 				output_text(color("JUMP!", colors.jump));
 			}
-		} else if (battle.enemy.special.includes(specials.bonnie) && battle.enemy_boss_count >= 3 && !enemy_charged) {
-			battle.enemy_boss_count = 0;
-			output_text(color("DIG!", colors.dig));
-			let enemy_healed = Math.round(battle.enemy.hp / 4);
-			battle.enemy_hp += enemy_healed;
-			if (battle.enemy_hp > battle.enemy.hp) {
-				battle.enemy_hp = battle.enemy.hp;
-			}
-			output_text(color(battle.enemy.name_long) + " GAINED " + color(enemy_healed, colors.heal) + color(" HP"));
 		} else {
 			output_text(color(battle.enemy.name_long) + " ATTACKED");
 			let player_damaged = battle.enemy.atk;
@@ -1668,9 +1714,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 	}
 	output_text_silent("");
 	
-	if (qp_turn) {
-		battle.turn_count--;
-	} else {
+	if (!qp_turn) {
 		if (player.jump && battle.player_jump < 3) {
 			battle.player_jump++;
 		}
@@ -1727,18 +1771,16 @@ function turn_hander(player_action, used_item = items.acorn) {
 		}
 	}
 	battle.qp_available = false;
-	battle.turn_count++;
-	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
-		if (battle.enemy_boss_count <= 0) {
-			output_text_silent("BOSS ACTION IN " + color(3) + " TURNS");
-		} else if (battle.enemy_boss_count == 1 || (battle.enemy_boss_count == 2 && battle.enemy_charging)) {
-			output_text_silent("BOSS ACTION IN " + color(2) + " TURNS");
-		} else if (battle.enemy_boss_count >= 2) {
-			output_text_silent("BOSS ACTION IN " + color(1) + " TURN");
-		}
-		battle.enemy_boss_count++;
+	if (!qp_turn) {
+		battle.turn_count++;
 	}
-	output_text_silent("CURRENT TURN: " + color(battle.turn_count));
+	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
+		if (!qp_turn) {
+			battle.enemy_boss_count++;
+		}
+		output_text_silent("BOSS TIMER: " + color(battle.enemy_boss_count));
+	}
+	output_text_silent("NEXT TURN: " + color(battle.turn_count));
 	display_update();
 }
 

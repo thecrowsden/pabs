@@ -901,8 +901,8 @@ const enemies = {
 		name: "GOD",
 		name_long: "GOD",
 		location: color("BONUS", colors.bonus_zone),
-		hp: 1000000,
-		atk: 175000,
+		hp: 100000,
+		atk: 399,
 		crit: 50,
 		miss: 0,
 		spawn: 0,
@@ -911,7 +911,7 @@ const enemies = {
 		special: [
 			specials.fake,
 			specials.boss,
-			specials.bonnie,
+			specials.dkf,
 		],
 	},
 };

@@ -902,8 +902,8 @@ const enemies = {
 		name_long: "GOD",
 		location: color("BONUS", colors.bonus_zone),
 		hp: 100000,
-		atk: 100000,
-		crit: 50,
+		atk: 1000,
+		crit: 100,
 		miss: 0,
 		spawn: 0,
 		reward: 0,
@@ -911,6 +911,8 @@ const enemies = {
 		special: [
 			specials.fake,
 			specials.boss,
+			specials.bonnie,
+			specials.dkf,
 		],
 	},
 };
@@ -1613,6 +1615,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 		if (battle.enemy.special.includes(specials.bonnie) && battle.enemy_boss_count >= 3 && !enemy_charged) {
 			battle.enemy_boss_count = 0;
 			output_text(color("DIG!", colors.dig));
+			output_text(color(battle.enemy.name_long) + " USED " + color("ACORN"));
 			let enemy_healed = Math.round(battle.enemy.hp / 4);
 			battle.enemy_hp += enemy_healed;
 			if (battle.enemy_hp > battle.enemy.hp) {

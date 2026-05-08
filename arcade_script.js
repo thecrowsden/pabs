@@ -1423,6 +1423,9 @@ function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
 		break;
 	}
 	if (modified_stat == stat_id.cheat_menu) {
+		stat_edit(stat_id.cheat_player_crit, stat_actions.random);
+		stat_edit(stat_id.cheat_enemy_crit, stat_actions.random);
+		stat_edit(stat_id.cheat_enemy_miss, stat_actions.random);
 		change_state(states.stats);
 	}
 	local_update();

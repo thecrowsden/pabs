@@ -43,7 +43,12 @@
 	</div>
 	<div id="div_stats">
 		<div class="button_zone">
-			<button type="button" class="button_wide" onclick="change_state(states.menu)">BACK</button>
+			<div class="button_column">
+				<button type="button" class="button_normal" onclick="change_state(states.menu)">BACK</button>
+			</div>
+			<div class="button_column_right">
+				<button type="button" class="button_normal" onclick="reset_stats()">RESET</button>
+			</div>
 			<div></div>
 			<div class="button_column">
 				<button type="button" class="button_normal" onclick="min_stats()">ALL MIN</button>
@@ -52,13 +57,7 @@
 				<button type="button" class="button_normal" onclick="max_stats()">ALL MAX</button>
 			</div>
 			<!--
-			<div></div>
-			<div class="button_column">
-				<button type="button" class="button_normal" onclick="change_state(states.menu)">BACK</button>
-			</div>
-			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="min_stats()">ALL MIN</button>
-			</div>
+			<button type="button" class="button_wide" onclick="min_stats()">ALL MIN</button>
 			<div></div>
 			<div class="button_column">
 				<button type="button" class="button_normal" onclick="max_stats()">DEAD FOREST MAX</button>
@@ -70,6 +69,9 @@
 		</div>
 		<div class="box">
 			<p id="text_stats_name">error: text_stats_name</p>
+			<!--
+			<p id="text_stats_chapter">error: text_stats_chapter</p>
+			-->
 			<p id="text_stats_coins">error: text_stats_coins</p>
 			<p>STATS:</p>
 			<div class="button_zone_left">
@@ -300,7 +302,7 @@
 			</div>
 		</div>
 		<div class="box">
-			<p id="text_output" class="textbox">error: text_output</p>
+			<p id="text_output" class="color_dark whitespace">error: text_output</p>
 		</div>
 	</div>
 	<div id="div_cheats">

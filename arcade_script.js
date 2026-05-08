@@ -1,5 +1,17 @@
 //by The Crow's Den
 
+function nancatch(input_calc) {
+	return input_calc ? input_calc : 0;
+}
+
+function randbool(random_odds) {
+	return Math.random() < random_odds;
+}
+
+function shallow_copy(input_object) {
+	return JSON.parse(JSON.stringify(input_object));
+}
+
 const stat_actions = {
 	min: 0,
 	minus: 1,
@@ -207,18 +219,19 @@ const item_info = {
 
 const colors = {
 	normal: "white",
+	faded: "darkgray",
 	heal: "chartreuse",
 	crit: "darkorange",
 	miss: "orchid",
-	faded: "darkgray",
-	heal_faded: "limegreen",
-	gilded: "goldenrod",
-	plus: "crimson",
 	jump: "yellow",
 	hook: "red",
 	dig: "dodgerblue",
+	shield: "chartreuse",
+	shield_faded: "limegreen",
 	bonus: "yellow",
 	reflect: "blueviolet",
+	gilded: "goldenrod",
+	plus: "crimson",
 	bonus_zone: "violet",
 };
 
@@ -287,15 +300,22 @@ const states = {
 
 const specials = {
 	fake: 0,
-	gilded: 1,
-	plus: 2,
-	boss: 3,
-	chica: 4,
-	foxy: 5,
-	bonnie: 6,
-	bb: 7,
-	dkf: 8,
+	boss: 1,
+	chica: 2,
+	foxy: 3,
+	bonnie: 4,
+	bb: 5,
+	dkf: 6,
 };
+
+const progress_markers = {
+	tdf: 0,
+	tdf_act_1: 1,
+	tdf_act_2: 2,
+	jumpless: 3,
+	hookless: 4,
+	digless: 5,
+}
 
 const enemies = {
 	c_deer: {
@@ -309,7 +329,12 @@ const enemies = {
 		spawn: 50,
 		reward: 5,
 		weight: 60,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_hawk: {
 		name: "CORRUPT HAWK",
@@ -322,7 +347,12 @@ const enemies = {
 		spawn: 33,
 		reward: 10,
 		weight: 40,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_hedgehog: {
 		name: "CORRUPT HEDGEHOG",
@@ -335,7 +365,12 @@ const enemies = {
 		spawn: 17,
 		reward: 20,
 		weight: 19,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	g_hawk: {
 		name: "GILDED HAWK",
@@ -349,7 +384,9 @@ const enemies = {
 		reward: 150,
 		weight: 1,
 		special: [
-			specials.gilded,
+		],
+		progress: [
+			progress_markers.tdf,
 		],
 	},
 	c_chica: {
@@ -367,6 +404,10 @@ const enemies = {
 			specials.boss,
 			specials.chica,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_boar: {
 		name: "CORRUPT BOAR",
@@ -379,7 +420,12 @@ const enemies = {
 		spawn: 50,
 		reward: 10,
 		weight: 60,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_cat: {
 		name: "CORRUPT CAT",
@@ -392,7 +438,12 @@ const enemies = {
 		spawn: 33,
 		reward: 15,
 		weight: 40,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_woodpecker: {
 		name: "CORRUPT WOODPECKER",
@@ -405,7 +456,12 @@ const enemies = {
 		spawn: 17,
 		reward: 25,
 		weight: 19,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	g_cat: {
 		name: "GILDED CAT",
@@ -419,7 +475,9 @@ const enemies = {
 		reward: 150,
 		weight: 1,
 		special: [
-			specials.gilded,
+		],
+		progress: [
+			progress_markers.tdf,
 		],
 	},
 	c_foxy: {
@@ -437,6 +495,10 @@ const enemies = {
 			specials.boss,
 			specials.foxy,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_owl: {
 		name: "CORRUPT OWL",
@@ -449,7 +511,12 @@ const enemies = {
 		spawn: 50,
 		reward: 15,
 		weight: 60,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_beaver: {
 		name: "CORRUPT BEAVER",
@@ -462,7 +529,12 @@ const enemies = {
 		spawn: 33,
 		reward: 20,
 		weight: 40,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	c_wolf: {
 		name: "CORRUPT WOLF",
@@ -475,7 +547,12 @@ const enemies = {
 		spawn: 17,
 		reward: 30,
 		weight: 19,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	g_beaver: {
 		name: "GILDED BEAVER",
@@ -489,7 +566,9 @@ const enemies = {
 		reward: 150,
 		weight: 1,
 		special: [
-			specials.gilded,
+		],
+		progress: [
+			progress_markers.tdf,
 		],
 	},
 	c_bonnie: {
@@ -507,6 +586,10 @@ const enemies = {
 			specials.boss,
 			specials.bonnie,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	d_deer: {
 		name: "DEAD DEER",
@@ -519,7 +602,12 @@ const enemies = {
 		spawn: 33,
 		reward: 20,
 		weight: 33,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	d_boar: {
 		name: "DEAD BOAR",
@@ -532,7 +620,12 @@ const enemies = {
 		spawn: 33,
 		reward: 20,
 		weight: 32,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	d_owl: {
 		name: "DEAD OWL",
@@ -545,7 +638,12 @@ const enemies = {
 		spawn: 33,
 		reward: 20,
 		weight: 32,
-		special: [],
+		special: [
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	gd_deer: {
 		name: "GILDED DEAD DEER",
@@ -559,7 +657,9 @@ const enemies = {
 		reward: 150,
 		weight: 1,
 		special: [
-			specials.gilded,
+		],
+		progress: [
+			progress_markers.tdf,
 		],
 	},
 	gd_boar: {
@@ -574,7 +674,9 @@ const enemies = {
 		reward: 150,
 		weight: 1,
 		special: [
-			specials.gilded,
+		],
+		progress: [
+			progress_markers.tdf,
 		],
 	},
 	gd_owl: {
@@ -589,7 +691,9 @@ const enemies = {
 		reward: 150,
 		weight: 1,
 		special: [
-			specials.gilded,
+		],
+		progress: [
+			progress_markers.tdf,
 		],
 	},
 	c_bb: {
@@ -607,6 +711,10 @@ const enemies = {
 			specials.boss,
 			specials.bb,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_1,
+		],
 	},
 	cp_deer: {
 		name: "CORRUPT DEER+",
@@ -620,7 +728,10 @@ const enemies = {
 		reward: 10,
 		weight: 60,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	cp_hawk: {
@@ -635,7 +746,10 @@ const enemies = {
 		reward: 15,
 		weight: 40,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	cp_hedgehog: {
@@ -650,7 +764,10 @@ const enemies = {
 		reward: 25,
 		weight: 19,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	d_chica: {
@@ -668,6 +785,11 @@ const enemies = {
 			specials.boss,
 			specials.chica,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
+			progress_markers.jumpless,
+		],
 	},
 	cp_boar: {
 		name: "CORRUPT BOAR+",
@@ -681,7 +803,10 @@ const enemies = {
 		reward: 15,
 		weight: 60,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	cp_cat: {
@@ -696,7 +821,10 @@ const enemies = {
 		reward: 20,
 		weight: 40,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	cp_woodpecker: {
@@ -711,7 +839,10 @@ const enemies = {
 		reward: 30,
 		weight: 19,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	d_foxy: {
@@ -729,6 +860,11 @@ const enemies = {
 			specials.boss,
 			specials.foxy,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
+			progress_markers.hookless,
+		],
 	},
 	cp_owl: {
 		name: "CORRUPT OWL+",
@@ -742,7 +878,10 @@ const enemies = {
 		reward: 20,
 		weight: 60,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	cp_beaver: {
@@ -757,7 +896,10 @@ const enemies = {
 		reward: 25,
 		weight: 40,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	cp_wolf: {
@@ -772,7 +914,10 @@ const enemies = {
 		reward: 35,
 		weight: 19,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	d_bonnie: {
@@ -790,6 +935,11 @@ const enemies = {
 			specials.boss,
 			specials.bonnie,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
+			progress_markers.jumpless,
+		],
 	},
 	dp_deer: {
 		name: "DEAD DEER+",
@@ -803,7 +953,10 @@ const enemies = {
 		reward: 25,
 		weight: 33,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	dp_boar: {
@@ -818,7 +971,10 @@ const enemies = {
 		reward: 25,
 		weight: 32,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	dp_owl: {
@@ -833,7 +989,10 @@ const enemies = {
 		reward: 25,
 		weight: 32,
 		special: [
-			specials.plus,
+		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
 		],
 	},
 	dkf: {
@@ -851,6 +1010,10 @@ const enemies = {
 			specials.boss,
 			specials.dkf,
 		],
+		progress: [
+			progress_markers.tdf,
+			progress_markers.tdf_act_2,
+		],
 	},
 	fake_null: {
 		name: "NULL",
@@ -865,6 +1028,8 @@ const enemies = {
 		weight: 0,
 		special: [
 			specials.fake,
+		],
+		progress: [
 		],
 	},
 	fake_harry: {
@@ -881,6 +1046,8 @@ const enemies = {
 		special: [
 			specials.fake,
 		],
+		progress: [
+		],
 	},
 	fake_sponge: {
 		name: "SPONGE",
@@ -895,6 +1062,8 @@ const enemies = {
 		weight: 0,
 		special: [
 			specials.fake,
+		],
+		progress: [
 		],
 	},
 	fake_god: {
@@ -912,6 +1081,8 @@ const enemies = {
 			specials.fake,
 			specials.boss,
 			specials.dkf,
+		],
+		progress: [
 		],
 	},
 };
@@ -1043,14 +1214,21 @@ const location_id = {
 	bonus: "bonus",
 };
 
-let player = {
+let player_template = {
 	name: "POPGOES THE WEASEL",
 	name_long: "POPGOES THE WEASEL",
 	name_short: "POPGOES",
 	hp: 30,
 	atk: 4,
 	coins: 0,
-	inv: [0, 0, 0, 0, 0, 0,],
+	inv: [
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+	],
 	jump: false,
 	hook: false,
 	dig: false,
@@ -1060,11 +1238,16 @@ let player = {
 	cheat_menu: false,
 };
 
-let cheats = {
+let player = shallow_copy(player_template);
+
+let cheats_template = {
+	enemy_laser: laser_states.none,
 	cheat_player_crit: cheat_states.random,
 	cheat_enemy_crit: cheat_states.random,
 	cheat_enemy_miss: cheat_states.random,
 }
+
+let cheats = shallow_copy(cheats_template);
 
 let battle = {
 	enemy: {
@@ -1075,19 +1258,26 @@ let battle = {
 		atk: 0,
 		miss: 0,
 		reward: 0,
-		special: [],
+		special: [
+		],
 	},
 	enemy_hp: 0,
 	enemy_charging: false,
 	enemy_boss_count: 1,
-	enemy_laser: laser_states.none,
 	enemy_status_text: "",
 	player_hp: 0,
 	player_atk: 0,
 	player_atk_plus: 0,
 	player_def_plus: 0,
 	player_shield: 0,
-	player_items_used: [0, 0, 0, 0, 0, 0,],
+	player_items_used: [
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+	],
 	player_jump: 3,
 	player_hook: 3,
 	player_shield: 3,
@@ -1097,14 +1287,6 @@ let battle = {
 };
 
 let global_output_text = "error: global_output_text";
-
-function nancatch(input_calc) {
-	return input_calc ? input_calc : 0;
-}
-
-function randbool(random_odds) {
-	return Math.random() < random_odds;
-}
 
 function local_update() {
 	localStorage.setItem("local_data", JSON.stringify({player: player, cheats: cheats}));
@@ -1129,13 +1311,31 @@ function change_state(new_state) {
 }
 
 function body_onload() {
-	change_state(states.menu);
 	let temp_local_data = localStorage.getItem("local_data");
 	if (temp_local_data) {
 		let local_data = JSON.parse(temp_local_data);
-		player = local_data.player;
-		cheats = local_data.cheats;
+		if (local_data.player) {
+			player.hp = local_data.player.hp || player_template.hp;
+			player.atk = local_data.player.atk || player_template.atk;
+			player.coins = local_data.player.coins || player_template.coins;
+			player.jump = local_data.player.jump || player_template.jump;
+			player.hook = local_data.player.hook || player_template.hook;
+			player.dig = local_data.player.dig || player_template.dig;
+			player.qp = local_data.player.qp || player_template.qp;
+			player.spiky = local_data.player.spiky || player_template.spiky;
+			player.cheat_menu = local_data.player.cheat_menu || player_template.cheat_menu;
+			if (local_data.player.inv) {
+				item_list.forEach((i) => player.inv[i] = local_data.player.inv[i] || player_template.inv[i]);
+			}
+		}
+		if (local_data.cheats) {
+			cheats.enemy_laser = local_data.cheats.enemy_laser || cheats_template.enemy_laser;
+			cheats.cheat_player_crit = local_data.cheats.cheat_player_crit || cheats_template.cheat_player_crit;
+			cheats.cheat_enemy_crit = local_data.cheats.cheat_enemy_crit || cheats_template.cheat_enemy_crit;
+			cheats.cheat_enemy_miss = local_data.cheats.cheat_enemy_miss || cheats_template.cheat_enemy_miss;
+		}
 	}
+	change_state(states.menu);
 }
 
 function select_forest(forest_id) {
@@ -1201,16 +1401,16 @@ function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
 		case stat_types.laser:
 			switch (stat_action) {
 				case stat_actions.never:
-					battle.enemy_laser = laser_states.none;
+					cheats.enemy_laser = laser_states.none;
 				break;
 				case stat_actions.purple:
-					battle.enemy_laser = laser_states.purple;
+					cheats.enemy_laser = laser_states.purple;
 				break;
 				case stat_actions.random:
-					battle.enemy_laser = laser_states.random;
+					cheats.enemy_laser = laser_states.random;
 				break;
 				case stat_actions.yellow:
-					battle.enemy_laser = laser_states.yellow;
+					cheats.enemy_laser = laser_states.yellow;
 				break;
 			}
 		break;
@@ -1219,6 +1419,13 @@ function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
 		change_state(states.stats);
 	}
 	local_update();
+	display_update();
+}
+
+function reset_stats() {
+	player = shallow_copy(player_template);
+	cheats = shallow_copy(cheats_template);
+	localStorage.clear();
 	display_update();
 }
 
@@ -1306,7 +1513,7 @@ function display_update() {
 		document.getElementById("btn_stats_" + stat_info[i].name + "_never").disabled = cheats[stat_info[i].name] == cheat_states.never;
 		document.getElementById("btn_stats_" + stat_info[i].name + "_always").disabled = cheats[stat_info[i].name] == cheat_states.always;
 	});
-	switch (battle.enemy_laser) {
+	switch (cheats.enemy_laser) {
 		case laser_states.none:
 			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.faded);
 		break;
@@ -1320,10 +1527,10 @@ function display_update() {
 			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.bonus);
 		break;
 	}
-	document.getElementById("btn_stats_laser_never").disabled = battle.enemy_laser == laser_states.none;
-	document.getElementById("btn_stats_laser_purple").disabled = battle.enemy_laser == laser_states.purple;
-	document.getElementById("btn_stats_laser_random").disabled = battle.enemy_laser == laser_states.random;
-	document.getElementById("btn_stats_laser_yellow").disabled = battle.enemy_laser == laser_states.yellow;
+	document.getElementById("btn_stats_laser_never").disabled = cheats.enemy_laser == laser_states.none;
+	document.getElementById("btn_stats_laser_purple").disabled = cheats.enemy_laser == laser_states.purple;
+	document.getElementById("btn_stats_laser_random").disabled = cheats.enemy_laser == laser_states.random;
+	document.getElementById("btn_stats_laser_yellow").disabled = cheats.enemy_laser == laser_states.yellow;
 	
 	for (let i = 0; i < 6 && i < locations[player.location].enemies.length; i++) {
 		document.getElementById("btn_enemy_" + i).innerHTML = enemies[locations[player.location].enemies[i]].name_long;
@@ -1436,13 +1643,28 @@ function battle_reset() {
 	clear_player_status_text();
 	battle.enemy_hp = battle.enemy.hp;
 	battle.enemy_charging = false;
-	battle.enemy_laser = laser_states.none;
 	battle.enemy_boss_count = 1;
 	clear_enemy_status_text();
 	battle.turn_count = 1;
 	change_state(states.battle);
 	clear_output_text();
 	output_text("ENCOUNTERED " + color(battle.enemy.name_long));
+	if (player.jump && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.jumpless))) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("JUMP", colors.jump) + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.hook && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.hookless))) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("HOOK", colors.hook) + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.dig && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.digless))) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("DIG", colors.dig) + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.qp && battle.enemy.progress.includes(progress_markers.tdf_act_1)) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("QUICK POCKET") + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.spiky && battle.enemy.progress.includes(progress_markers.tdf_act_1)) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("SPIKY SHIELD") + " ABILITY WITH THIS ENEMY");
+	}
+	//
 	output_text_silent("");
 	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
 		output_text_silent("BOSS TIMER: " + color("1"));
@@ -1499,7 +1721,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 	let qp_turn = battle.qp_available && player_action == actions.item;
 	let active_laser = laser_states.none;
 	if (battle.enemy.special.includes(specials.dkf)) {
-		active_laser = battle.enemy_laser;
+		active_laser = cheats.enemy_laser;
 	}
 	if (active_laser == laser_states.random) {
 		active_laser = randbool(0.5) ? laser_states.yellow : laser_states.purple;
@@ -1550,11 +1772,11 @@ function turn_hander(player_action, used_item = items.acorn) {
 		break;
 		case actions.jump:
 			battle.player_jump = 0;
-			output_text(color(player.name_short) + " USED " + color(" JUMP", colors.jump));
+			output_text(color(player.name_short) + " USED " + color("JUMP", colors.jump));
 		break;
 		case actions.hook:
 			battle.player_hook = 0;
-			output_text(color(player.name_short) + " USED " + color(" HOOK", colors.hook));
+			output_text(color(player.name_short) + " USED " + color("HOOK", colors.hook));
 			if (battle.enemy.special.includes(specials.chica) && battle.enemy_boss_count >= 3) {
 				battle.enemy_boss_count = 0;
 				output_text(color("JUMP!", colors.jump));
@@ -1581,7 +1803,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 		break;
 		case actions.dig:
 			battle.player_dig = 0;
-			output_text(color(player.name_short) + " USED " + color(" DIG", colors.dig));
+			output_text(color(player.name_short) + " USED " + color("DIG", colors.dig));
 			output_text(color("DIG!", colors.dig));
 			let dig_item = items.acorn;
 			let item_index = Math.random() * 100;
@@ -1639,7 +1861,12 @@ function turn_hander(player_action, used_item = items.acorn) {
 			output_text(color(battle.enemy.name_long) + " ATTACKED");
 			let player_damaged = battle.enemy.atk;
 			let player_damage_color = colors.normal;
-			if (
+			if (player_action == actions.jump) {
+				if (enemy_hook) {
+					battle.enemy_boss_count = 0;
+				}
+				output_text(color("JUMP!", colors.jump));
+			} else if (
 				battle.enemy.miss > 0
 				&&
 				(battle.enemy_miss >= 100 || cheats.cheat_enemy_miss != cheat_states.never)
@@ -1650,21 +1877,22 @@ function turn_hander(player_action, used_item = items.acorn) {
 					battle.enemy_boss_count = 0;
 				}
 				output_text(color("MISS!", colors.miss));
-			} else if (player_action == actions.jump) {
-				output_text(color("JUMP!", colors.jump));
 			} else if (battle.player_shield > 0) {
 				if (battle.enemy.special.includes(specials.dkf) && enemy_charged) {
 					battle.player_shield = 0;
-					output_text(color(battle.enemy.name_long) + " BROKE " + color("SHIELD", colors.heal));
+					output_text(color(battle.enemy.name_long) + " BROKE " + color("SHIELD", colors.shield));
 					if (player_blocking) {
 						player_damaged /= 2;
 						//output_text(color("BLOCK!"));
+					}
+					if (battle.player_def_plus > 0) {
+						player_damaged = player_damaged * 2 / 3;
 					}
 					player_damaged = Math.round(player_damaged * 3 / 2);
 					battle.player_hp -= player_damaged;
 					output_text(color(player.name_short) + " LOST " + color(player_damaged, colors.crit) + color(" HP"));
 				} else {
-					output_text(color("SHIELD!", colors.heal));
+					output_text(color("SHIELD!", colors.shield));
 					if (player.spiky) {
 						if (enemy_charged) {
 							player_damaged *= 3;
@@ -1767,10 +1995,10 @@ function turn_hander(player_action, used_item = items.acorn) {
 	if (battle.player_shield > 0) {
 		if (battle.player_shield == 1) {
 			output_text_silent("SHIELD: " + color("1") + " TURN LEFT")
-			player_status_text(color("SHIELD", colors.heal_faded));
+			player_status_text(color("SHIELD", colors.shield_faded));
 		} else {
 			output_text_silent("SHIELD: " + color(battle.player_shield) + " TURNS LEFT")
-			player_status_text(color("SHIELD", colors.heal));
+			player_status_text(color("SHIELD", colors.shield));
 		}
 	}
 	battle.qp_available = false;

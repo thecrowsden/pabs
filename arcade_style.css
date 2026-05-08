@@ -3,6 +3,7 @@
 	font-weight: bold;
 	font-size: 1rem;
 	text-wrap: balance;
+	user-select: none;
 }
 :root {
 	--global-width: min(100vw, 60rem);
@@ -15,7 +16,15 @@ body {
 p {
 	margin: 0.5rem;
 }
+.title {
+	text-align: center;
+}
+.link {
+	cursor: pointer;
+	color: mediumturquoise;
+}
 button {
+	cursor: pointer;
 	padding: 0.25rem 0.5rem;
 	text-align: center;
 	border-width: 0.25rem 0.5rem;
@@ -37,6 +46,18 @@ button.button_wide {
 	width: calc(var(--global-width) - 1rem);
 	min-height: 5rem;
 }
+button.jump {
+	color: yellow;
+}
+button.hook {
+	color: red;
+}
+button.dig {
+	color: dodgerblue;
+}
+button.qp {
+	color: chartreuse;
+}
 div.box {
 	margin: 0.5rem auto 0;
 	border-width: 0.25rem 0.5rem;
@@ -45,9 +66,6 @@ div.box {
 	border-style: solid;
 	background-color: black;
 	border-color: dimgray;
-}
-div.box_title {
-	text-align: center;
 }
 div.hp_base {
 	margin: 0 auto;
@@ -102,6 +120,9 @@ div.button_column_right {
 	margin: 0;
 	font-size: 0;
 }
+.color_normal {
+	color: white;
+}
 .color_dark {
 	color: darkgray;
 }
@@ -113,6 +134,12 @@ div.button_column_right {
 }
 
 @media (hover: hover) {
+	.link:hover {
+		color: paleturquoise;
+	}
+	.link:active {
+		color: teal;
+	}
 	button:hover {
 		background-color: dimgray;
 		border-color: white;
@@ -120,9 +147,6 @@ div.button_column_right {
 	button:disabled {
 		background-color: black;
 		color: dimgray;
-	}
-	button.qp {
-		color: chartreuse;
 	}
 	button.jump {
 		color: yellow;
@@ -157,6 +181,9 @@ div.button_column_right {
 		background-color: black;
 		color: dodgerblue;
 	}
+	button.qp {
+		color: chartreuse;
+	}
 	button:active {
 		background-color: black;
 	}
@@ -175,6 +202,9 @@ div.button_column_right {
 }
 
 @media (hover: none) {
+	.link:active {
+		color: teal;
+	}
 	button:active {
 		background-color: dimgray;
 		border-color: white;
@@ -182,9 +212,6 @@ div.button_column_right {
 	button:disabled {
 		background-color: black;
 		color: dimgray;
-	}
-	button.qp {
-		color: chartreuse;
 	}
 	button.jump {
 		color: yellow;
@@ -218,6 +245,9 @@ div.button_column_right {
 	button.dig:disabled {
 		background-color: black;
 		color: dodgerblue;
+	}
+	button.qp {
+		color: chartreuse;
 	}
 }
 

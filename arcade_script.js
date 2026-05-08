@@ -248,6 +248,7 @@ function color(input_string, input_color = colors.normal) {
 
 const div_list = [
 	"div_menu",
+	"div_changelog",
 	"div_stats",
 	"div_forest",
 	"div_forest_4",
@@ -264,6 +265,9 @@ const div_list = [
 const states = {
 	menu: {
 		div_menu: true,
+	},
+	changelog: {
+		div_changelog: true,
 	},
 	stats: {
 		div_stats: true,
@@ -1073,6 +1077,23 @@ const enemies = {
 		progress: [
 		],
 	},
+	fake_beast: {
+		name: "BEAST",
+		name_long: "BEAST",
+		location: color("BONUS", colors.bonus_zone),
+		hp: 999996,
+		atk: 3261,
+		crit: 100,
+		miss: 0,
+		spawn: 0,
+		reward: 0,
+		weight: 0,
+		special: [
+			specials.fake,
+		],
+		progress: [
+		],
+	},
 	fake_god: {
 		name: "GOD",
 		name_long: "GOD",
@@ -1199,10 +1220,11 @@ const locations = {
 		name: color("BONUS", colors.bonus_zone),
 		color: colors.bg_bonus,
 		enemies: [
+			"fake_null",
+			"fake_null",
 			"fake_sponge",
+			"fake_beast",
 			"fake_harry",
-			"fake_null",
-			"fake_null",
 		],
 		boss: "fake_god",
 		boss_color: colors.bg_dkf,
@@ -1241,7 +1263,6 @@ let player_template = {
 	dig: false,
 	qp: false,
 	spiky: false,
-	location: "wf",
 	cheat_menu: false,
 };
 
@@ -1255,6 +1276,11 @@ let cheats_template = {
 }
 
 let cheats = shallow_copy(cheats_template);
+
+let global_info = {
+	state: states.menu,
+	location: "wf",
+}
 
 let battle = {
 	enemy: {
@@ -1299,7 +1325,7 @@ function local_update() {
 	localStorage.setItem("local_data", JSON.stringify({player: player, cheats: cheats}));
 }
 
-function change_state(new_state) {
+function load_state(new_state) {
 	div_list.forEach((i) => document.getElementById(i).style.display = new_state[i] ? "block" : "none");
 	document.getElementById("div_battle_dkf").style.display = battle.enemy.special.includes(specials.dkf) ? "block" : "none";
 	if (!player.cheat_menu) {
@@ -1307,14 +1333,19 @@ function change_state(new_state) {
 	}
 	if (new_state.bg_color_area) {
 		if (new_state.div_battle && battle.enemy.special.includes(specials.boss)) {
-			document.body.style.backgroundColor = locations[player.location].boss_color;
+			document.body.style.backgroundColor = locations[global_info.location].boss_color;
 		} else {
-			document.body.style.backgroundColor = locations[player.location].color;
+			document.body.style.backgroundColor = locations[global_info.location].color;
 		}
 	} else {
 		document.body.style.backgroundColor = "black";
 	}
 	display_update();
+}
+
+function change_state(new_state) {
+	global_info.state = new_state;
+	load_state(new_state);
 }
 
 function body_onload() {
@@ -1346,7 +1377,7 @@ function body_onload() {
 }
 
 function select_forest(forest_id) {
-	player.location = forest_id;
+	global_info.location = forest_id;
 	if (forest_id == location_id.nf || forest_id == location_id.nfp) {
 		change_state(states.forest_north);
 	} else {
@@ -1436,6 +1467,7 @@ function reset_stats() {
 	player = shallow_copy(player_template);
 	cheats = shallow_copy(cheats_template);
 	localStorage.clear();
+	change_state(states.stats);
 	display_update();
 }
 
@@ -1542,10 +1574,10 @@ function display_update() {
 	document.getElementById("btn_stats_laser_random").disabled = cheats.enemy_laser == laser_states.random;
 	document.getElementById("btn_stats_laser_yellow").disabled = cheats.enemy_laser == laser_states.yellow;
 	
-	for (let i = 0; i < 6 && i < locations[player.location].enemies.length; i++) {
-		document.getElementById("btn_enemy_" + i).innerHTML = enemies[locations[player.location].enemies[i]].name_long;
+	for (let i = 0; i < 6 && i < locations[global_info.location].enemies.length; i++) {
+		document.getElementById("btn_enemy_" + i).innerHTML = enemies[locations[global_info.location].enemies[i]].name_long;
 	}
-	document.getElementById("btn_enemy_boss").innerHTML = enemies[locations[player.location].boss].name_long;
+	document.getElementById("btn_enemy_boss").innerHTML = enemies[locations[global_info.location].boss].name_long;
 	
 	document.getElementById("text_enemy_name").innerHTML = battle.enemy.name_long;
 	document.getElementById("text_player_name").innerHTML = player.name_long;
@@ -1608,7 +1640,7 @@ function display_update() {
 }
 
 function start_battle_from_index(enemy_index) {
-	battle.enemy = enemies[locations[player.location].enemies[enemy_index]];
+	battle.enemy = enemies[locations[global_info.location].enemies[enemy_index]];
 	battle_reset();
 }
 
@@ -1858,7 +1890,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 			&&
 			battle.enemy.crit > 0
 			&&
-			(battle.enemy_crit >= 100 || cheats.cheat_enemy_crit != cheat_states.never)
+			(battle.enemy.crit >= 100 || cheats.cheat_enemy_crit != cheat_states.never)
 			&&
 			(randbool(battle.enemy.crit / 100) || cheats.cheat_enemy_crit == cheat_states.always)
 		) {
@@ -1879,7 +1911,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 			} else if (
 				battle.enemy.miss > 0
 				&&
-				(battle.enemy_miss >= 100 || cheats.cheat_enemy_miss != cheat_states.never)
+				(battle.enemy.miss >= 100 || cheats.cheat_enemy_miss != cheat_states.never)
 				&&
 				(randbool(battle.enemy.miss / 100) || cheats.cheat_enemy_miss == cheat_states.always)
 			) {

@@ -232,7 +232,14 @@ const colors = {
 	reflect: "blueviolet",
 	gilded: "goldenrod",
 	plus: "crimson",
+	bg_wf: "saddlebrown",
+	bg_sf: "forestgreen",
+	bg_ef: "whitesmoke",
+	bg_nf: "black",
+	bg_bb: "dodgerblue",
+	bg_dkf: "maroon",
 	bonus_zone: "violet",
+	bg_bonus: "darkviolet",
 };
 
 function color(input_string, input_color = colors.normal) {
@@ -1090,7 +1097,7 @@ const enemies = {
 const locations = {
 	wf: {
 		name: "WEST FOREST",
-		color: "saddlebrown",
+		color: colors.bg_wf,
 		enemies: [
 			"c_deer",
 			"c_hawk",
@@ -1098,11 +1105,11 @@ const locations = {
 			"g_hawk",
 		],
 		boss: "c_chica",
-		boss_color: "saddlebrown",
+		boss_color: colors.bg_wf,
 	},
 	sf: {
 		name: "SOUTH FOREST",
-		color: "forestgreen",
+		color: colors.bg_sf,
 		enemies: [
 			"c_boar",
 			"c_cat",
@@ -1110,11 +1117,11 @@ const locations = {
 			"g_cat",
 		],
 		boss: "c_foxy",
-		boss_color: "forestgreen",
+		boss_color: colors.bg_sf,
 	},
 	ef: {
 		name: "EAST FOREST",
-		color: "whitesmoke",
+		color: colors.bg_ef,
 		enemies: [
 			"c_owl",
 			"c_beaver",
@@ -1122,11 +1129,11 @@ const locations = {
 			"g_beaver",
 		],
 		boss: "c_bonnie",
-		boss_color: "whitesmoke",
+		boss_color: colors.bg_ef,
 	},
 	nf: {
 		name: "NORTH FOREST",
-		color: "black",
+		color: colors.bg_nf,
 		enemies: [
 			"d_deer",
 			"gd_deer",
@@ -1136,11 +1143,11 @@ const locations = {
 			"gd_owl",
 		],
 		boss: "c_bb",
-		boss_color: "dodgerblue",
+		boss_color: colors.bg_bb,
 	},
 	wfp: {
 		name: "WEST FOREST" + color("+", colors.plus),
-		color: "saddlebrown",
+		color: colors.bg_wf,
 		enemies: [
 			"cp_deer",
 			"cp_hawk",
@@ -1148,11 +1155,11 @@ const locations = {
 			"g_hawk",
 		],
 		boss: "d_chica",
-		boss_color: "saddlebrown",
+		boss_color: colors.bg_wf,
 	},
 	sfp: {
 		name: "SOUTH FOREST" + color("+", colors.plus),
-		color: "forestgreen",
+		color: colors.bg_sf,
 		enemies: [
 			"cp_boar",
 			"cp_cat",
@@ -1160,11 +1167,11 @@ const locations = {
 			"g_cat",
 		],
 		boss: "d_foxy",
-		boss_color: "forestgreen",
+		boss_color: colors.bg_sf,
 	},
 	efp: {
 		name: "EAST FOREST" + color("+", colors.plus),
-		color: "whitesmoke",
+		color: colors.bg_ef,
 		enemies: [
 			"cp_owl",
 			"cp_beaver",
@@ -1172,11 +1179,11 @@ const locations = {
 			"g_beaver",
 		],
 		boss: "d_bonnie",
-		boss_color: "whitesmoke",
+		boss_color: colors.bg_ef,
 	},
 	nfp: {
 		name: "NORTH FOREST" + color("+", colors.plus),
-		color: "black",
+		color: colors.bg_nf,
 		enemies: [
 			"dp_deer",
 			"gd_deer",
@@ -1186,11 +1193,11 @@ const locations = {
 			"gd_owl",
 		],
 		boss: "dkf",
-		boss_color: "maroon",
+		boss_color: colors.bg_dkf,
 	},
 	bonus: {
 		name: color("BONUS", colors.bonus_zone),
-		color: "darkviolet",
+		color: colors.bg_bonus,
 		enemies: [
 			"fake_sponge",
 			"fake_harry",
@@ -1198,7 +1205,7 @@ const locations = {
 			"fake_null",
 		],
 		boss: "fake_god",
-		boss_color: "maroon",
+		boss_color: colors.bg_dkf,
 	},
 };
 

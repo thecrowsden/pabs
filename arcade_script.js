@@ -1,4 +1,7 @@
-//by The Crow's Den
+/*
+by The Crow's Den
+v1.0.0
+*/
 
 function nancatch(input_calc) {
 	return input_calc ? input_calc : 0;
@@ -1706,7 +1709,6 @@ function battle_reset() {
 	if (player.spiky && battle.enemy.progress.includes(progress_markers.tdf_act_1)) {
 		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("SPIKY SHIELD") + " ABILITY WITH THIS ENEMY");
 	}
-	//
 	output_text_silent("");
 	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
 		output_text_silent("BOSS TIMER: " + color("1"));
@@ -1776,12 +1778,12 @@ function turn_hander(player_action, used_item = items.acorn) {
 				output_text(color("JUMP!", colors.jump));
 			} else {
 				if (active_laser == laser_states.purple) {
-					output_text(color("REFLECT!", colors.reflect));
 					enemy_damaged *= 2;
+					output_text(color("REFLECT!", colors.reflect));
 				}
 				if (active_laser == laser_states.yellow) {
-					output_text(color("BONUS!", colors.bonus));
 					enemy_damaged *= 1.5;
+					output_text(color("BONUS!", colors.bonus));
 				}
 				let player_crit = false;
 				if (
@@ -1824,15 +1826,15 @@ function turn_hander(player_action, used_item = items.acorn) {
 				output_text(color("JUMP!", colors.jump));
 			} else {
 				if (active_laser == laser_states.purple) {
-					output_text(color("REFLECT!", colors.reflect));
 					enemy_damaged *= 2;
+					output_text(color("REFLECT!", colors.reflect));
 				}
 				if (active_laser == laser_states.yellow) {
-					output_text(color("BONUS!", colors.bonus));
 					enemy_damaged *= 1.5;
+					output_text(color("BONUS!", colors.bonus));
 				}
-				output_text(color("HOOK!", colors.hook));
 				enemy_damaged *= 3;
+				output_text(color("HOOK!", colors.hook));
 				enemy_damaged = Math.round(enemy_damaged);
 				if (active_laser == laser_states.purple) {
 					battle.player_hp -= enemy_damaged;
@@ -1903,12 +1905,7 @@ function turn_hander(player_action, used_item = items.acorn) {
 			output_text(color(battle.enemy.name_long) + " ATTACKED");
 			let player_damaged = battle.enemy.atk;
 			let player_damage_color = colors.normal;
-			if (player_action == actions.jump) {
-				if (enemy_hook) {
-					battle.enemy_boss_count = 0;
-				}
-				output_text(color("JUMP!", colors.jump));
-			} else if (
+			if (
 				battle.enemy.miss > 0
 				&&
 				(battle.enemy.miss >= 100 || cheats.cheat_enemy_miss != cheat_states.never)
@@ -1918,7 +1915,15 @@ function turn_hander(player_action, used_item = items.acorn) {
 				if (enemy_hook) {
 					battle.enemy_boss_count = 0;
 				}
+				/*if (player_action == actions.jump) {
+					output_text(color("JUMP!", colors.jump));
+				}*/
 				output_text(color("MISS!", colors.miss));
+			} else if (player_action == actions.jump) {
+				if (enemy_hook) {
+					battle.enemy_boss_count = 0;
+				}
+				output_text(color("JUMP!", colors.jump));
 			} else if (battle.player_shield > 0) {
 				if (battle.enemy.special.includes(specials.dkf) && enemy_charged) {
 					battle.player_shield = 0;
@@ -1939,11 +1944,13 @@ function turn_hander(player_action, used_item = items.acorn) {
 						if (enemy_charged) {
 							player_damaged *= 3;
 							player_damage_color = colors.crit;
+							//output_text(color("CRIT!", colors.crit));
 						}
 						if (enemy_hook) {
 							battle.enemy_boss_count = 0;
 							player_damaged *= 5;
 							player_damage_color = colors.hook;
+							//output_text(color("HOOK!", colors.hook));
 						}
 						player_damaged = Math.round(player_damaged / 2);
 						battle.enemy_hp -= player_damaged;

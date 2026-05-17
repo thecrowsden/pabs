@@ -8,7 +8,6 @@ v1.0.0
 	font-weight: bold;
 	font-size: 1rem;
 	text-wrap: balance;
-	user-select: none;
 }
 :root {
 	--global-width: min(100vw, 60rem);
@@ -21,10 +20,7 @@ body {
 p {
 	margin: 0.5rem;
 }
-.title {
-	text-align: center;
-}
-.link {
+span.link {
 	cursor: pointer;
 	color: mediumturquoise;
 }
@@ -71,6 +67,10 @@ div.box {
 	border-style: solid;
 	background-color: black;
 	border-color: dimgray;
+	user-select: none;
+}
+div.title {
+	text-align: center;
 }
 div.hp_base {
 	margin: 0 auto;
@@ -100,7 +100,7 @@ div.button_column {
 div.button_column_right {
 	display: inline-block;
 }
-.inline_zone {
+div.inline_zone {
 	font-size: 0;
 }
 .inline_left {
@@ -124,6 +124,10 @@ div.button_column_right {
 .invisible {
 	margin: 0;
 	font-size: 0;
+	user-select: none;
+}
+div.selectable {
+	user-select: revert-layer;
 }
 .color_normal {
 	color: white;

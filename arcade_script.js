@@ -15,6 +15,798 @@ function shallow_copy(input_object) {
 	return JSON.parse(JSON.stringify(input_object));
 }
 
+function color(input_string, input_color = colors.normal) {
+	return "<span style='color: " + input_color + ";'>" + input_string + "</span>";
+}
+
+function local_update() {
+	localStorage.setItem("local_data", JSON.stringify({player: player, cheats: cheats}));
+}
+
+function load_state(new_state) {
+	div_list.forEach((i) => document.getElementById(i).style.display = new_state[i] ? "block" : "none");
+	document.getElementById("div_battle_dkf").style.display = battle.enemy.special.includes(specials.dkf) ? "block" : "none";
+	if (!player.cheat_menu) {
+		document.getElementById("div_cheats").style.display = "none"
+	}
+	if (new_state.bg_color_area) {
+		if (new_state.div_battle && battle.enemy.special.includes(specials.boss)) {
+			document.body.style.backgroundColor = locs[global_info.loc].boss_color;
+		} else {
+			document.body.style.backgroundColor = locs[global_info.loc].color;
+		}
+	} else {
+		document.body.style.backgroundColor = "black";
+	}
+	display_update();
+}
+
+function change_state(new_state) {
+	global_info.state = new_state;
+	load_state(new_state);
+}
+
+function body_onload() {
+	let temp_local_data = localStorage.getItem("local_data");
+	let local_data = {};
+	if (temp_local_data) {
+		local_data = JSON.parse(temp_local_data);
+		if (local_data.player) {
+			player.hp = local_data.player.hp || player_template.hp;
+			player.atk = local_data.player.atk || player_template.atk;
+			player.coins = local_data.player.coins || player_template.coins;
+			player.jump = local_data.player.jump || player_template.jump;
+			player.hook = local_data.player.hook || player_template.hook;
+			player.dig = local_data.player.dig || player_template.dig;
+			player.qp = local_data.player.qp || player_template.qp;
+			player.spiky = local_data.player.spiky || player_template.spiky;
+			player.cheat_menu = local_data.player.cheat_menu || player_template.cheat_menu;
+			if (local_data.player.inv) {
+				item_list.forEach((i) => player.inv[i] = local_data.player.inv[i] || player_template.inv[i]);
+			}
+		}
+		if (local_data.cheats) {
+			cheats.enemy_laser = local_data.cheats.enemy_laser || cheats_template.enemy_laser;
+			cheats.cheat_player_crit = local_data.cheats.cheat_player_crit || cheats_template.cheat_player_crit;
+			cheats.cheat_enemy_crit = local_data.cheats.cheat_enemy_crit || cheats_template.cheat_enemy_crit;
+			cheats.cheat_enemy_miss = local_data.cheats.cheat_enemy_miss || cheats_template.cheat_enemy_miss;
+		}
+	}
+	change_state(states.menu);
+}
+
+function select_forest(forest_id) {
+	global_info.loc = forest_id;
+	if (forest_id == loc_id.nf || forest_id == loc_id.nfp) {
+		change_state(states.forest_north);
+	} else {
+		change_state(states.forest);
+	}
+}
+
+function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
+	switch (stat_info[modified_stat].type) {
+		case stat_types.item:
+			switch (stat_action) {
+				case stat_actions.min:
+					player.inv[modified_item] = 0;
+				break;
+				case stat_actions.minus:
+					if (player.inv[modified_item > 0]) {
+						player.inv[modified_item]--;
+					}
+				break;
+				case stat_actions.plus:
+					if (player.inv[modified_item < 99]) {
+						player.inv[modified_item]++;
+					}
+				break;
+				case stat_actions.max:
+					player.inv[modified_item] = 99;
+				break;
+			}
+		break;
+		case stat_types.range:
+			switch (stat_action) {
+				case stat_actions.min:
+					player[stat_info[modified_stat].name] = stat_info[modified_stat].min;
+				break;
+				case stat_actions.minus:
+					if (player[stat_info[modified_stat].name] > stat_info[modified_stat].min) {
+						player[stat_info[modified_stat].name] -= stat_info[modified_stat].step;
+					}
+				break;
+				case stat_actions.plus:
+					if (player[stat_info[modified_stat].name] < stat_info[modified_stat].max) {
+						player[stat_info[modified_stat].name] += stat_info[modified_stat].step;
+					}
+				break;
+				case stat_actions.max:
+					player[stat_info[modified_stat].name] = stat_info[modified_stat].max;
+				break;
+			}
+		break;
+		case stat_types.bool:
+			player[stat_info[modified_stat].name] = stat_action == stat_actions.on;
+		break;
+		case stat_types.cheat:
+			switch (stat_action) {
+				case stat_actions.random:
+					cheats[stat_info[modified_stat].name] = cheat_states.random;
+				break;
+				case stat_actions.never:
+					cheats[stat_info[modified_stat].name] = cheat_states.never;
+				break;
+				case stat_actions.always:
+					cheats[stat_info[modified_stat].name] = cheat_states.always;
+				break;
+			}
+		break;
+		case stat_types.laser:
+			switch (stat_action) {
+				case stat_actions.never:
+					cheats.enemy_laser = laser_states.none;
+				break;
+				case stat_actions.purple:
+					cheats.enemy_laser = laser_states.purple;
+				break;
+				case stat_actions.random:
+					cheats.enemy_laser = laser_states.random;
+				break;
+				case stat_actions.yellow:
+					cheats.enemy_laser = laser_states.yellow;
+				break;
+			}
+		break;
+	}
+	if (modified_stat == stat_id.cheat_menu) {
+		stat_edit(stat_id.cheat_player_crit, stat_actions.random);
+		stat_edit(stat_id.cheat_enemy_crit, stat_actions.random);
+		stat_edit(stat_id.cheat_enemy_miss, stat_actions.random);
+		change_state(states.stats);
+	}
+	local_update();
+	display_update();
+}
+
+function reset_stats() {
+	player = shallow_copy(player_template);
+	cheats = shallow_copy(cheats_template);
+	localStorage.clear();
+	change_state(states.stats);
+	display_update();
+}
+
+function min_stats() {
+	stat_edit(stat_id.hp, stat_actions.min);
+	stat_edit(stat_id.atk, stat_actions.min);
+	item_list.forEach((i) => stat_edit(stat_id.item, stat_actions.min, i));
+	stat_edit(stat_id.jump, stat_actions.off);
+	stat_edit(stat_id.hook, stat_actions.off);
+	stat_edit(stat_id.dig, stat_actions.off);
+	stat_edit(stat_id.qp, stat_actions.off);
+	stat_edit(stat_id.spiky, stat_actions.off);
+}
+
+function max_stats() {
+	stat_edit(stat_id.hp, stat_actions.max);
+	stat_edit(stat_id.atk, stat_actions.max);
+	item_list.forEach((i) => stat_edit(stat_id.item, stat_actions.max, i));
+	stat_edit(stat_id.jump, stat_actions.on);
+	stat_edit(stat_id.hook, stat_actions.on);
+	stat_edit(stat_id.dig, stat_actions.on);
+	stat_edit(stat_id.qp, stat_actions.on);
+	stat_edit(stat_id.spiky, stat_actions.on);
+}
+
+function clear_output_text() {
+	global_output_text = "";
+};
+
+function output_text(newest_text_output) {
+	global_output_text += "- " + newest_text_output + "<br>";
+};
+
+function output_text_silent(newest_text_output) {
+	global_output_text += newest_text_output + "<br>";
+};
+
+function clear_enemy_status_text() {
+	battle.enemy_status_text = "";
+}
+
+function enemy_status_text(newest_status) {
+	if (battle.enemy_status_text.length > 0) {
+		battle.enemy_status_text += "  ";
+	}
+	battle.enemy_status_text += newest_status;
+}
+
+function clear_player_status_text() {
+	battle.player_status_text = "";
+}
+
+function player_status_text(newest_status) {
+	if (battle.player_status_text.length > 0) {
+		battle.player_status_text += "  ";
+	}
+	battle.player_status_text += newest_status;
+}
+
+function display_update() {
+	document.getElementById("text_stats_name").innerHTML = player.name_long;
+	document.getElementById("text_stats_coins").innerHTML = player.coins + "&nbsp;COINS";
+	stat_list.range.forEach((i) => {
+		document.getElementById("text_stats_" + stat_info[i].name).innerHTML = stat_info[i].name_long + ":&nbsp;" + player[stat_info[i].name];
+		document.getElementById("btn_stats_" + stat_info[i].name + "_min").disabled = player[stat_info[i].name] <= stat_info[i].min;
+		document.getElementById("btn_stats_" + stat_info[i].name + "_minus").disabled = player[stat_info[i].name] <= stat_info[i].min;
+		document.getElementById("btn_stats_" + stat_info[i].name + "_plus").disabled = player[stat_info[i].name] >= stat_info[i].max;
+		document.getElementById("btn_stats_" + stat_info[i].name + "_max").disabled = player[stat_info[i].name] >= stat_info[i].max;
+	});
+	stat_list.bool.forEach((i) => {
+		document.getElementById("text_stats_" + stat_info[i].name).innerHTML = color(stat_info[i].name_long, player[stat_info[i].name] ? colors.normal : colors.faded);
+		document.getElementById("btn_stats_" + stat_info[i].name + "_off").disabled = !player[stat_info[i].name];
+		document.getElementById("btn_stats_" + stat_info[i].name + "_on").disabled = player[stat_info[i].name];
+	});
+	item_list.forEach((i) => {
+		document.getElementById("text_stats_inv_" + item_info[i].name).innerHTML = item_info[i].name_long + ":&nbsp;" + player.inv[i];
+		document.getElementById("btn_stats_inv_" + item_info[i].name + "_min").disabled = player.inv[i] <= 0;
+		document.getElementById("btn_stats_inv_" + item_info[i].name + "_minus").disabled = player.inv[i] <= 0;
+		document.getElementById("btn_stats_inv_" + item_info[i].name + "_plus").disabled = player.inv[i] >= 99;
+		document.getElementById("btn_stats_inv_" + item_info[i].name + "_max").disabled = player.inv[i] >= 99;
+	});
+	stat_list.cheat.forEach((i) => {
+		document.getElementById("text_stats_" + stat_info[i].name).innerHTML = color(stat_info[i].name_long, cheats[stat_info[i].name] == cheat_states.random ? colors.faded : colors.normal);
+		document.getElementById("btn_stats_" + stat_info[i].name + "_random").disabled = cheats[stat_info[i].name] == cheat_states.random;
+		document.getElementById("btn_stats_" + stat_info[i].name + "_never").disabled = cheats[stat_info[i].name] == cheat_states.never;
+		document.getElementById("btn_stats_" + stat_info[i].name + "_always").disabled = cheats[stat_info[i].name] == cheat_states.always;
+	});
+	switch (cheats.enemy_laser) {
+		case laser_states.none:
+			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.faded);
+		break;
+		case laser_states.purple:
+			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.reflect);
+		break;
+		case laser_states.random:
+			document.getElementById("text_stats_laser").innerHTML = color("LASER");
+		break;
+		case laser_states.yellow:
+			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.bonus);
+		break;
+	}
+	document.getElementById("btn_stats_laser_never").disabled = cheats.enemy_laser == laser_states.none;
+	document.getElementById("btn_stats_laser_purple").disabled = cheats.enemy_laser == laser_states.purple;
+	document.getElementById("btn_stats_laser_random").disabled = cheats.enemy_laser == laser_states.random;
+	document.getElementById("btn_stats_laser_yellow").disabled = cheats.enemy_laser == laser_states.yellow;
+	
+	for (let i = 0; i < 6 && i < locs[global_info.loc].enemies.length; i++) {
+		document.getElementById("btn_enemy_" + i).innerHTML = enemies[locs[global_info.loc].enemies[i]].name_long;
+	}
+	document.getElementById("btn_enemy_boss").innerHTML = enemies[locs[global_info.loc].boss].name_long;
+	
+	document.getElementById("text_enemy_name").innerHTML = battle.enemy.name_long;
+	document.getElementById("text_player_name").innerHTML = player.name_long;
+	document.getElementById("div_enemy_hp_bar").style.width = (100 * nancatch(battle.enemy_hp / battle.enemy.hp)) + "%";
+	document.getElementById("div_player_hp_bar").style.width = (100 * nancatch(battle.player_hp / player.hp)) + "%";
+	
+	document.getElementById("text_output").innerHTML = global_output_text;
+	
+	if (window.matchMedia("(max-width:30rem)").matches) {
+		document.getElementById("text_enemy_atk").innerHTML = "";
+		document.getElementById("text_player_atk").innerHTML = "";
+		document.getElementById("text_enemy_atk").classList.add("marginless");
+		document.getElementById("text_player_atk").classList.add("marginless");
+		document.getElementById("text_enemy_hp").innerHTML = "HP:&nbsp;" + battle.enemy_hp + "/" + battle.enemy.hp + "  ATK:&nbsp;" + battle.enemy.atk + "  " + battle.enemy_status_text;
+		document.getElementById("text_player_hp").innerHTML = "HP:&nbsp;" + battle.player_hp + "/" + player.hp + "  ATK:&nbsp;" + battle.player_atk + "  " + battle.player_status_text;
+		document.getElementById("text_enemy_status").innerHTML = "";
+		document.getElementById("text_player_status").innerHTML = "";
+		document.getElementById("text_enemy_status").classList.add("marginless");
+		document.getElementById("text_player_status").classList.add("marginless");
+	} else {
+		document.getElementById("text_enemy_atk").innerHTML = "ATK:&nbsp;" + battle.enemy.atk;
+		document.getElementById("text_player_atk").innerHTML = "ATK:&nbsp;" + battle.player_atk;
+		document.getElementById("text_enemy_atk").classList.remove("marginless");
+		document.getElementById("text_player_atk").classList.remove("marginless");
+		document.getElementById("text_enemy_hp").innerHTML = "HP:&nbsp;" + battle.enemy_hp + "/" + battle.enemy.hp;
+		document.getElementById("text_player_hp").innerHTML = "HP:&nbsp;" + battle.player_hp + "/" + player.hp;
+		document.getElementById("text_enemy_status").innerHTML = battle.enemy_status_text;
+		document.getElementById("text_player_status").innerHTML = battle.player_status_text;
+		document.getElementById("text_enemy_status").classList.remove("marginless");
+		document.getElementById("text_player_status").classList.remove("marginless");
+	}
+	
+	["jump", "hook", "dig"].forEach((i) => {// remove arbitrary
+		if (player[i]) {
+			document.getElementById("btn_battle_" + i).classList.add(i);
+		} else {
+			document.getElementById("btn_battle_" + i).classList.remove(i);
+		}
+		document.getElementById("btn_battle_" + i).disabled = battle["player_" + i] < 3;
+		document.getElementById("btn_battle_" + i).innerHTML = i.toUpperCase() + (player[i] ? (battle["player_" + i] < 3 ? ("<br>(" + battle["player_" + i] + "/3)") : "<br>READY") : "");
+	});
+	if (battle.qp_available) {
+		document.getElementById("btn_battle_items").classList.add("qp");
+	} else {
+		document.getElementById("btn_battle_items").classList.remove("qp");
+	}
+	
+	document.getElementById("btn_battle_inv_acorn").innerHTML = "ACORN<br>+25%&nbsp;HP<br>x" + player.inv[items.acorn];
+	document.getElementById("btn_battle_inv_acorn").disabled = player.inv[items.acorn] <= 0 || (battle.qp_available);
+	document.getElementById("btn_battle_inv_fruit").innerHTML = "FRUIT<br>+50%&nbsp;HP<br>x" + player.inv[items.fruit];
+	document.getElementById("btn_battle_inv_fruit").disabled = player.inv[items.fruit] <= 0 || (battle.qp_available);
+	document.getElementById("btn_battle_inv_pizza").innerHTML = "PIZZA<br>FULL&nbsp;HP<br>x" + player.inv[items.pizza];
+	document.getElementById("btn_battle_inv_pizza").disabled = player.inv[items.pizza] <= 0 || (battle.qp_available);
+	document.getElementById("btn_battle_inv_atk").innerHTML = "ATK+<br>+50%&nbsp;5T<br>x" + player.inv[items.atk];
+	document.getElementById("btn_battle_inv_atk").disabled = player.inv[items.atk] <= 0;
+	document.getElementById("btn_battle_inv_def").innerHTML = "DEF+<br>+33%&nbsp;5T<br>x" + player.inv[items.def];
+	document.getElementById("btn_battle_inv_def").disabled = player.inv[items.def] <= 0;
+	document.getElementById("btn_battle_inv_shield").innerHTML = "SHIELD<br>INVN&nbsp;3T<br>x" + player.inv[items.shield];
+	document.getElementById("btn_battle_inv_shield").disabled = player.inv[items.shield] <= 0;
+}
+
+function start_battle_from_index(enemy_index) {
+	battle.enemy = enemies[locs[global_info.loc].enemies[enemy_index]];
+	battle_reset();
+}
+
+function start_battle_from_loc(loc) {
+	let enemy_list = locs[loc].enemies;
+	let weight_sum = 0;
+	let weight_index = 0;
+	let enemy_chosen = false;
+	enemy_list.forEach((i) => weight_sum += enemies[i].weight);
+	weight_index = Math.random() * weight_sum;
+	enemy_list.forEach((i) => {
+		if (!enemy_chosen && weight_index < enemies[i].weight) {
+			battle.enemy = enemies[i];
+			enemy_chosen = true;
+		} else {
+			weight_index -= enemies[i].weight;
+		}
+	});
+	battle_reset();
+}
+
+function start_battle_from_loc_boss(loc) {
+	battle.enemy = enemies[locs[loc].boss];
+	battle_reset();
+}
+
+function start_battle_from_id(enemy_id) {
+	battle.enemy = enemies[enemy_id];
+	battle_reset();
+}
+
+function battle_reset() {
+	battle.player_hp = player.hp;
+	battle.player_atk = player.atk;
+	battle.player_atk_plus = 0;
+	battle.player_def_plus = 0;
+	battle.player_shield = 0;
+	battle.player_jump = player.jump ? 3 : 0;
+	battle.player_hook = player.hook ? 3 : 0;
+	battle.player_dig = player.dig ? 3 : 0;
+	battle.qp_available = player.qp;
+	item_list.forEach((i) => battle.player_items_used[i] = 0);
+	clear_player_status_text();
+	battle.enemy_hp = battle.enemy.hp;
+	battle.enemy_charging = false;
+	battle.enemy_boss_count = 1;
+	clear_enemy_status_text();
+	battle.turn_count = 1;
+	change_state(states.battle);
+	clear_output_text();
+	output_text("ENCOUNTERED " + color(battle.enemy.name_long));
+	if (player.jump && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.jumpless))) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("JUMP", colors.jump) + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.hook && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.hookless))) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("HOOK", colors.hook) + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.dig && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.digless))) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("DIG", colors.dig) + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.qp && battle.enemy.progress.includes(progress_markers.tdf_act_1)) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("QUICK POCKET") + " ABILITY WITH THIS ENEMY");
+	}
+	if (player.spiky && battle.enemy.progress.includes(progress_markers.tdf_act_1)) {
+		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("SPIKY SHIELD") + " ABILITY WITH THIS ENEMY");
+	}
+	output_text_silent("");
+	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
+		output_text_silent("BOSS TIMER: " + color("1"));
+	}
+	output_text_silent("NEXT TURN: " + color("1"));
+	display_update();
+}
+
+function turn_use_item(used_item) {
+	let player_healed = player.hp;
+	output_text(color(player.name_short) + " USED " + color(item_info[used_item].name_long));
+	switch (used_item) {
+		case items.acorn:
+			player_healed /= 2;
+		case items.fruit:
+			player_healed /= 2;
+		case items.pizza:
+			player_healed = Math.round(player_healed);
+			battle.player_hp += player_healed;
+			if (battle.player_hp > player.hp) {
+				battle.player_hp = player.hp;
+			}
+			output_text(color(player.name_short) + " GAINED " + color(player_healed, colors.heal) + color("&nbsp;HP"));
+		break;
+		case items.atk:
+			battle.player_atk_plus = 6;
+			battle.player_atk = Math.round(player.atk * 1.5);
+		break;
+		case items.def:
+			battle.player_def_plus = 6;
+		break;
+		case items.shield:
+			battle.player_shield = 3;
+		break;
+	}
+}
+
+function turn_win() {
+	battle.enemy_hp = 0;
+	change_state(states.battle_win);
+	output_text_silent("");
+	output_text(color("YOU WIN!"));
+	player.coins += battle.enemy.reward;
+	output_text("PRIZE: " + color(battle.enemy.reward) + "&nbsp;COINS");
+	local_update();
+}
+
+function turn_hander(player_action, used_item = items.acorn) {
+	let qp_turn = battle.qp_available && player_action == actions.item;
+	let active_laser = laser_states.none;
+	
+	let enemy_damaged = battle.player_atk;
+	let enemy_damage_color = colors.normal;
+	let player_blocking = false;
+	
+	let player_damaged = battle.enemy.atk;
+	let player_damage_color = colors.normal;
+	let enemy_charged = false;
+	let enemy_hook = false;
+	let enemy_healed = Math.round(battle.enemy.hp / 4);//set later
+	
+	let dig_item = items.acorn;
+	let dig_item_index = Math.random() * 100;//set later
+	let dig_item_chosen = false;
+	
+	change_state(states.battle);
+	clear_output_text();
+	
+	if (battle.enemy.special.includes(specials.dkf)) {
+		active_laser = cheats.enemy_laser;
+	}
+	if (active_laser == laser_states.random) {
+		active_laser = randbool(0.5) ? laser_states.yellow : laser_states.purple;
+	}
+	
+	switch (player_action) {
+		case actions.attack:
+			output_text(color(player.name_short) + " ATTACKED");
+			if (battle.enemy.special.includes(specials.chica) && battle.enemy_boss_count >= 3) {
+				battle.enemy_boss_count = 0;
+				output_text(color("JUMP!", colors.jump));
+			} else {
+				if (active_laser == laser_states.purple) {
+					enemy_damaged *= 2;
+					output_text(color("REFLECT!", colors.reflect));
+				}
+				if (active_laser == laser_states.yellow) {
+					enemy_damaged *= 1.5;
+					output_text(color("BONUS!", colors.bonus));
+				}
+				if (
+					cheats.cheat_player_crit != cheat_states.never
+					&&
+					(randbool(0.1) || cheats.cheat_player_crit == cheat_states.always)
+				) {
+					enemy_damaged *= 3;
+					enemy_damage_color = colors.crit;
+					output_text(color("CRIT!", colors.crit));
+				}
+				enemy_damaged = Math.round(enemy_damaged);
+				if (active_laser == laser_states.purple) {
+					battle.player_hp -= enemy_damaged;
+					output_text(color(player.name_short) + " LOST " + color(enemy_damaged, enemy_damage_color) + color("&nbsp;HP"));
+				} else {
+					battle.enemy_hp -= enemy_damaged;
+					output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, enemy_damage_color) + color("&nbsp;HP"));
+				}
+			}
+		break;
+		case actions.block:
+			player_blocking = true;
+			output_text(color(player.name_short) + " BLOCKED");
+		break;
+		case actions.item:
+			if (player.inv[used_item] > 0) {
+				player.inv[used_item]--;
+				battle.player_items_used[used_item]++;
+				turn_use_item(used_item);
+			} else {
+				output_text("error: player.inv[used_item] <= 0");
+				qp_turn = true;
+			}
+		break;
+		case actions.jump:
+			if (battle.player_jump >= 3) {
+				battle.player_jump = 0;
+				output_text(color(player.name_short) + " USED " + color("JUMP", colors.jump));
+			} else {
+				output_text("error: battle.player_jump < 3");
+				qp_turn = true;
+			}
+		break;
+		case actions.hook:
+			if (battle.player_hook >= 3) {
+				battle.player_hook = 0;
+				output_text(color(player.name_short) + " USED " + color("HOOK", colors.hook));
+				if (battle.enemy.special.includes(specials.chica) && battle.enemy_boss_count >= 3) {
+					battle.enemy_boss_count = 0;
+					output_text(color("JUMP!", colors.jump));
+				} else {
+					if (active_laser == laser_states.purple) {
+						enemy_damaged *= 2;
+						output_text(color("REFLECT!", colors.reflect));
+					}
+					if (active_laser == laser_states.yellow) {
+						enemy_damaged *= 1.5;
+						output_text(color("BONUS!", colors.bonus));
+					}
+					enemy_damaged *= 3;
+					output_text(color("HOOK!", colors.hook));
+					enemy_damaged = Math.round(enemy_damaged);
+					if (active_laser == laser_states.purple) {
+						battle.player_hp -= enemy_damaged;
+						output_text(color(player.name_short) + " LOST " + color(enemy_damaged, colors.hook) + color("&nbsp;HP"));
+					} else {
+						battle.enemy_hp -= enemy_damaged;
+						output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, colors.hook) + color("&nbsp;HP"));
+					}
+				}
+			} else {
+				output_text("error: battle.player_hook < 3");
+				qp_turn = true;
+			}
+		break;
+		case actions.dig:
+			if (battle.player_dig >= 3) {
+				battle.player_dig = 0;
+				output_text(color(player.name_short) + " USED " + color("DIG", colors.dig));
+				output_text(color("DIG!", colors.dig));
+				item_list.forEach((i) => {
+					if (!dig_item_chosen && dig_item_index < item_info[i].weight) {
+						dig_item = i;
+						dig_item_chosen = true;
+					} else {
+						dig_item_index -= item_info[i].weight;
+					}
+				});
+				turn_use_item(dig_item);
+			} else {
+				output_text("error: battle.player_dig < 3");
+				qp_turn = true;
+			}
+		break;
+	}
+	
+	if (battle.enemy_charging) {
+		enemy_charged = true;
+		if (!qp_turn) {
+			battle.enemy_charging = false;
+		}
+	}
+	if (battle.enemy.special.includes(specials.foxy) && battle.enemy_boss_count >= 3 && !enemy_charged) {
+		enemy_hook = true;
+	}
+	if (battle.enemy_hp <= 0) {
+		turn_win();
+	} else if (!qp_turn) {
+		output_text_silent("");
+		if (battle.enemy.special.includes(specials.bonnie) && battle.enemy_boss_count >= 3 && !enemy_charged) {
+			battle.enemy_boss_count = 0;
+			output_text(color("DIG!", colors.dig));
+			output_text(color(battle.enemy.name_long) + " USED " + color("ACORN"));
+			battle.enemy_hp += enemy_healed;
+			if (battle.enemy_hp > battle.enemy.hp) {
+				battle.enemy_hp = battle.enemy.hp;
+			}
+			output_text(color(battle.enemy.name_long) + " GAINED " + color(enemy_healed, colors.heal) + color("&nbsp;HP"));
+		} else if (
+			!enemy_charged && !enemy_hook
+			&&
+			battle.enemy.crit > 0
+			&&
+			(battle.enemy.crit >= 100 || cheats.cheat_enemy_crit != cheat_states.never)
+			&&
+			(randbool(battle.enemy.crit / 100) || cheats.cheat_enemy_crit == cheat_states.always)
+		) {
+			battle.enemy_charging = true;
+			output_text(color(battle.enemy.name_long) + " IS " + color("CHARGING", colors.crit));
+			if (player_action == actions.jump) {
+				output_text(color("JUMP!", colors.jump));
+			}
+		} else {
+			output_text(color(battle.enemy.name_long) + " ATTACKED");
+			if (
+				battle.enemy.miss > 0
+				&&
+				(battle.enemy.miss >= 100 || cheats.cheat_enemy_miss != cheat_states.never)
+				&&
+				(randbool(battle.enemy.miss / 100) || cheats.cheat_enemy_miss == cheat_states.always)
+			) {
+				if (enemy_hook) {
+					battle.enemy_boss_count = 0;
+				}
+				if (player_action == actions.jump) {
+					output_text(color("JUMP!", colors.jump));
+				}
+				output_text(color("MISS!", colors.miss));
+			} else if (player_action == actions.jump) {
+				if (enemy_hook) {
+					battle.enemy_boss_count = 0;
+				}
+				output_text(color("JUMP!", colors.jump));
+			} else if (battle.player_shield > 0) {
+				if (battle.enemy.special.includes(specials.dkf) && enemy_charged) {
+					battle.player_shield = 0;
+					output_text(color(battle.enemy.name_long) + " BROKE " + color("SHIELD", colors.shield));
+					if (player_blocking) {
+						player_damaged /= 2;
+						//output_text(color("BLOCK!"));
+					}
+					if (battle.player_def_plus > 0) {
+						player_damaged = player_damaged * 2 / 3;
+					}
+					player_damaged = Math.round(player_damaged * 3 / 2);
+					battle.player_hp -= player_damaged;
+					output_text(color(player.name_short) + " LOST " + color(player_damaged, colors.crit) + color("&nbsp;HP"));
+				} else {
+					output_text(color("SHIELD!", colors.shield));
+					if (player.spiky) {
+						if (enemy_charged) {
+							player_damaged *= 3;
+							player_damage_color = colors.crit;
+							//output_text(color("CRIT!", colors.crit));
+						}
+						if (enemy_hook) {
+							battle.enemy_boss_count = 0;
+							player_damaged *= 5;
+							player_damage_color = colors.hook;
+							//output_text(color("HOOK!", colors.hook));
+						}
+						player_damaged = Math.round(player_damaged / 2);
+						battle.enemy_hp -= player_damaged;
+						output_text(color(battle.enemy.name_long) + " LOST " + color(player_damaged, player_damage_color) + color("&nbsp;HP"));
+					}
+				}
+			} else {
+				if (player_blocking) {
+					player_damaged /= 2;
+					output_text(color("BLOCK!"));
+				}
+				if (battle.player_def_plus > 0) {
+					player_damaged = player_damaged * 2 / 3;
+				}
+				if (enemy_charged) {
+					player_damaged *= 3;
+					player_damage_color = colors.crit;
+					output_text(color("CRIT!", colors.crit));
+				}
+				if (enemy_hook) {
+					battle.enemy_boss_count = 0;
+					player_damaged *= 5;
+					player_damage_color = colors.hook;
+					output_text(color("HOOK!", colors.hook));
+				}
+				player_damaged = Math.round(player_damaged);
+				battle.player_hp -= player_damaged;
+				output_text(color(player.name_short) + " LOST " + color(player_damaged, player_damage_color) + color("&nbsp;HP"));
+			}
+			battle.enemy_charging = false;
+		}
+		if (battle.enemy_hp <= 0) {
+			turn_win();
+		} else if (battle.player_hp <= 0) {
+			battle.player_hp = 0;
+			change_state(states.battle_lose);
+			output_text_silent("");
+			item_list.forEach((i) => player.inv[i] += battle.player_items_used[i]);
+			output_text(color("YOU LOSE..."));
+		}
+	}
+	output_text_silent("");
+	
+	if (!qp_turn) {
+		if (player.jump && battle.player_jump < 3) {
+			battle.player_jump++;
+		}
+		if (player.hook && battle.player_hook < 3) {
+			battle.player_hook++;
+		}
+		if (battle.player_dig < 3 && player.dig) {
+			battle.player_dig++;
+		}
+		
+		if (battle.player_atk_plus > 0) {
+			battle.player_atk_plus--;
+		}
+		if (battle.player_def_plus > 0) {
+			battle.player_def_plus--;
+		}
+		if (battle.player_shield > 0) {
+			battle.player_shield--;
+		}
+		
+		battle.turn_count++;
+	}
+	
+	clear_enemy_status_text();
+	clear_player_status_text();
+	if (battle.enemy_charging) {
+		enemy_status_text(color("CHARGING", colors.crit));
+	}
+	if (battle.player_atk_plus > 0) {
+		if (battle.player_atk_plus == 1) {
+			output_text_silent("ATK+: " + color("1") + " TURN LEFT")
+			player_status_text(color("ATK+", colors.faded));
+		} else {
+			output_text_silent("ATK+: " + color(battle.player_atk_plus) + " TURNS LEFT")
+			player_status_text("ATK+");
+		}
+	} else {
+		battle.player_atk = player.atk;
+	}
+	if (battle.player_def_plus > 0) {
+		if (battle.player_def_plus == 1) {
+			output_text_silent("DEF+: " + color("1") + " TURN LEFT")
+			player_status_text(color("DEF+", colors.faded));
+		} else {
+			output_text_silent("DEF+: " + color(battle.player_def_plus) + " TURNS LEFT")
+			player_status_text("DEF+");
+		}
+	}
+	if (battle.player_shield > 0) {
+		if (battle.player_shield == 1) {
+			output_text_silent("SHIELD: " + color("1") + " TURN LEFT")
+			player_status_text(color("SHIELD", colors.shield_faded));
+		} else {
+			output_text_silent("SHIELD: " + color(battle.player_shield) + " TURNS LEFT")
+			player_status_text(color("SHIELD", colors.shield));
+		}
+	}
+	battle.qp_available = false;
+	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
+		if (!qp_turn) {
+			battle.enemy_boss_count++;
+		}
+		output_text_silent("BOSS TIMER: " + color(battle.enemy_boss_count));
+	}
+	output_text_silent("NEXT TURN: " + color(battle.turn_count));
+	display_update();
+}
+
+function battle_info() {
+	clear_output_text();
+	output_text_silent("NAME: " + color(battle.enemy.name_long));
+	output_text_silent("LOCATION: " + color(battle.enemy.loc));
+	output_text_silent("HP: " + color(battle.enemy.hp));
+	output_text_silent("ATK: " + color(battle.enemy.atk));
+	output_text_silent("CRIT: " + color(battle.enemy.crit) + "%");
+	output_text_silent("MISS: " + color(battle.enemy.miss) + "%");
+	output_text_silent("SPAWN: " + color(battle.enemy.spawn) + "%");
+	output_text_silent("REWARD: " + color(battle.enemy.reward) + "&nbsp;COINS");
+	display_update();
+}
+
 const stat_actions = {
 	min: 0,
 	minus: 1,
@@ -245,10 +1037,6 @@ const colors = {
 	bg_bonus: "darkviolet",
 };
 
-function color(input_string, input_color = colors.normal) {
-	return "<span style='color: " + input_color + ";'>" + input_string + "</span>";
-}
-
 const div_list = [
 	"div_menu",
 	"div_changelog",
@@ -335,7 +1123,7 @@ const enemies = {
 	c_deer: {
 		name: "CORRUPT DEER",
 		name_long: "CORRUPT DEER",
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 20,
 		atk: 2,
 		crit: 0,
@@ -353,7 +1141,7 @@ const enemies = {
 	c_hawk: {
 		name: "CORRUPT HAWK",
 		name_long: "CORRUPT HAWK",
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 30,
 		atk: 5,
 		crit: 20,
@@ -371,7 +1159,7 @@ const enemies = {
 	c_hedgehog: {
 		name: "CORRUPT HEDGEHOG",
 		name_long: "CORRUPT HEDGEHOG",
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 50,
 		atk: 3,
 		crit: 10,
@@ -389,7 +1177,7 @@ const enemies = {
 	g_hawk: {
 		name: "GILDED HAWK",
 		name_long: color("GILDED HAWK", colors.gilded),
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 30,
 		atk: 5,
 		crit: 20,
@@ -406,7 +1194,7 @@ const enemies = {
 	c_chica: {
 		name: "CORRUPT CHICA",
 		name_long: "CORRUPT CHICA",
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 60,
 		atk: 6,
 		crit: 15,
@@ -426,7 +1214,7 @@ const enemies = {
 	c_boar: {
 		name: "CORRUPT BOAR",
 		name_long: "CORRUPT BOAR",
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 40,
 		atk: 4,
 		crit: 5,
@@ -444,7 +1232,7 @@ const enemies = {
 	c_cat: {
 		name: "CORRUPT CAT",
 		name_long: "CORRUPT CAT",
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 60,
 		atk: 6,
 		crit: 15,
@@ -462,7 +1250,7 @@ const enemies = {
 	c_woodpecker: {
 		name: "CORRUPT WOODPECKER",
 		name_long: "CORRUPT WOODPECKER",
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 80,
 		atk: 8,
 		crit: 20,
@@ -480,7 +1268,7 @@ const enemies = {
 	g_cat: {
 		name: "GILDED CAT",
 		name_long: color("GILDED CAT", colors.gilded),
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 60,
 		atk: 6,
 		crit: 15,
@@ -497,7 +1285,7 @@ const enemies = {
 	c_foxy: {
 		name: "CORRUPT FOXY",
 		name_long: "CORRUPT FOXY",
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 120,
 		atk: 12,
 		crit: 15,
@@ -517,7 +1305,7 @@ const enemies = {
 	c_owl: {
 		name: "CORRUPT OWL",
 		name_long: "CORRUPT OWL",
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 60,
 		atk: 6,
 		crit: 10,
@@ -535,7 +1323,7 @@ const enemies = {
 	c_beaver: {
 		name: "CORRUPT BEAVER",
 		name_long: "CORRUPT BEAVER",
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 80,
 		atk: 8,
 		crit: 20,
@@ -553,7 +1341,7 @@ const enemies = {
 	c_wolf: {
 		name: "CORRUPT WOLF",
 		name_long: "CORRUPT WOLF",
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 120,
 		atk: 12,
 		crit: 40,
@@ -571,7 +1359,7 @@ const enemies = {
 	g_beaver: {
 		name: "GILDED BEAVER",
 		name_long: color("GILDED BEAVER", colors.gilded),
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 80,
 		atk: 8,
 		crit: 20,
@@ -588,7 +1376,7 @@ const enemies = {
 	c_bonnie: {
 		name: "CORRUPT BONNIE",
 		name_long: "CORRUPT BONNIE",
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 180,
 		atk: 18,
 		crit: 15,
@@ -608,7 +1396,7 @@ const enemies = {
 	d_deer: {
 		name: "DEAD DEER",
 		name_long: "DEAD DEER",
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 80,
 		atk: 8,
 		crit: 20,
@@ -626,7 +1414,7 @@ const enemies = {
 	d_boar: {
 		name: "DEAD BOAR",
 		name_long: "DEAD BOAR",
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 120,
 		atk: 12,
 		crit: 20,
@@ -644,7 +1432,7 @@ const enemies = {
 	d_owl: {
 		name: "DEAD OWL",
 		name_long: "DEAD OWL",
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 180,
 		atk: 18,
 		crit: 20,
@@ -662,7 +1450,7 @@ const enemies = {
 	gd_deer: {
 		name: "GILDED DEAD DEER",
 		name_long: color("GILDED DEAD DEER", colors.gilded),
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 80,
 		atk: 8,
 		crit: 20,
@@ -679,7 +1467,7 @@ const enemies = {
 	gd_boar: {
 		name: "GILDED DEAD BOAR",
 		name_long: color("GILDED DEAD BOAR", colors.gilded),
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 120,
 		atk: 12,
 		crit: 20,
@@ -696,7 +1484,7 @@ const enemies = {
 	gd_owl: {
 		name: "GILDED DEAD OWL",
 		name_long: color("GILDED DEAD OWL", colors.gilded),
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 180,
 		atk: 18,
 		crit: 20,
@@ -713,7 +1501,7 @@ const enemies = {
 	c_bb: {
 		name: "CORRUPT BB",
 		name_long: "CORRUPT BB",
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 240,
 		atk: 24,
 		crit: 0,
@@ -733,7 +1521,7 @@ const enemies = {
 	cp_deer: {
 		name: "CORRUPT DEER+",
 		name_long: "CORRUPT DEER" + color("+", colors.plus),
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 120,
 		atk: 12,
 		crit: 0,
@@ -751,7 +1539,7 @@ const enemies = {
 	cp_hawk: {
 		name: "CORRUPT HAWK+",
 		name_long: "CORRUPT HAWK" + color("+", colors.plus),
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 180,
 		atk: 24,
 		crit: 20,
@@ -769,7 +1557,7 @@ const enemies = {
 	cp_hedgehog: {
 		name: "CORRUPT HEDGEHOG+",
 		name_long: "CORRUPT HEDGEHOG" + color("+", colors.plus),
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 240,
 		atk: 18,
 		crit: 10,
@@ -787,7 +1575,7 @@ const enemies = {
 	d_chica: {
 		name: "DEAD CHICA",
 		name_long: "DEAD CHICA",
-		location: "WEST FOREST",
+		loc: "WEST FOREST",
 		hp: 300,
 		atk: 30,
 		crit: 20,
@@ -808,7 +1596,7 @@ const enemies = {
 	cp_boar: {
 		name: "CORRUPT BOAR+",
 		name_long: "CORRUPT BOAR" + color("+", colors.plus),
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 180,
 		atk: 18,
 		crit: 5,
@@ -826,7 +1614,7 @@ const enemies = {
 	cp_cat: {
 		name: "CORRUPT CAT+",
 		name_long: "CORRUPT CAT" + color("+", colors.plus),
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 240,
 		atk: 24,
 		crit: 15,
@@ -844,7 +1632,7 @@ const enemies = {
 	cp_woodpecker: {
 		name: "CORRUPT WOODPECKER+",
 		name_long: "CORRUPT WOODPECKER" + color("+", colors.plus),
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 300,
 		atk: 30,
 		crit: 20,
@@ -862,7 +1650,7 @@ const enemies = {
 	d_foxy: {
 		name: "DEAD FOXY",
 		name_long: "DEAD FOXY",
-		location: "SOUTH FOREST",
+		loc: "SOUTH FOREST",
 		hp: 360,
 		atk: 36,
 		crit: 20,
@@ -883,7 +1671,7 @@ const enemies = {
 	cp_owl: {
 		name: "CORRUPT OWL+",
 		name_long: "CORRUPT OWL" + color("+", colors.plus),
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 240,
 		atk: 24,
 		crit: 10,
@@ -901,7 +1689,7 @@ const enemies = {
 	cp_beaver: {
 		name: "CORRUPT BEAVER+",
 		name_long: "CORRUPT BEAVER" + color("+", colors.plus),
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 300,
 		atk: 30,
 		crit: 20,
@@ -919,7 +1707,7 @@ const enemies = {
 	cp_wolf: {
 		name: "CORRUPT WOLF+",
 		name_long: "CORRUPT WOLF" + color("+", colors.plus),
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 360,
 		atk: 36,
 		crit: 40,
@@ -937,7 +1725,7 @@ const enemies = {
 	d_bonnie: {
 		name: "DEAD BONNIE",
 		name_long: "DEAD BONNIE",
-		location: "EAST FOREST",
+		loc: "EAST FOREST",
 		hp: 420,
 		atk: 42,
 		crit: 20,
@@ -958,7 +1746,7 @@ const enemies = {
 	dp_deer: {
 		name: "DEAD DEER+",
 		name_long: "DEAD DEER" + color("+", colors.plus),
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 300,
 		atk: 30,
 		crit: 20,
@@ -976,7 +1764,7 @@ const enemies = {
 	dp_boar: {
 		name: "DEAD BOAR+",
 		name_long: "DEAD BOAR" + color("+", colors.plus),
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 330,
 		atk: 33,
 		crit: 20,
@@ -994,7 +1782,7 @@ const enemies = {
 	dp_owl: {
 		name: "DEAD OWL+",
 		name_long: "DEAD OWL" + color("+", colors.plus),
-		location: "NORTH FOREST",
+		loc: "NORTH FOREST",
 		hp: 360,
 		atk: 36,
 		crit: 20,
@@ -1012,7 +1800,7 @@ const enemies = {
 	dkf: {
 		name: "DEAD KING FREDDY",
 		name_long: "DEAD KING FREDDY",
-		location: "THE CASTLE",
+		loc: "THE CASTLE",
 		hp: 1200,
 		atk: 75,
 		crit: 30,
@@ -1032,7 +1820,7 @@ const enemies = {
 	fake_null: {
 		name: "NULL",
 		name_long: "NULL",
-		location: color("BONUS", colors.bonus_zone),
+		loc: color("BONUS", colors.bonus_zone),
 		hp: 0,
 		atk: 0,
 		crit: 0,
@@ -1049,7 +1837,7 @@ const enemies = {
 	fake_harry: {
 		name: "HARRY",
 		name_long: "HARRY",
-		location: color("BONUS", colors.bonus_zone),
+		loc: color("BONUS", colors.bonus_zone),
 		hp: 4,
 		atk: 1,
 		crit: 0,
@@ -1066,7 +1854,7 @@ const enemies = {
 	fake_sponge: {
 		name: "SPONGE",
 		name_long: "SPONGE",
-		location: color("BONUS", colors.bonus_zone),
+		loc: color("BONUS", colors.bonus_zone),
 		hp: 1000000,
 		atk: 0,
 		crit: 0,
@@ -1083,9 +1871,9 @@ const enemies = {
 	fake_beast: {
 		name: "BEAST",
 		name_long: "BEAST",
-		location: color("BONUS", colors.bonus_zone),
-		hp: 999996,
-		atk: 3261,
+		loc: color("BONUS", colors.bonus_zone),
+		hp: 1000000,
+		atk: 100000,
 		crit: 100,
 		miss: 0,
 		spawn: 0,
@@ -1100,7 +1888,7 @@ const enemies = {
 	fake_god: {
 		name: "GOD",
 		name_long: "GOD",
-		location: color("BONUS", colors.bonus_zone),
+		loc: color("BONUS", colors.bonus_zone),
 		hp: 49999,
 		atk: 399,
 		crit: 50,
@@ -1118,7 +1906,7 @@ const enemies = {
 	},
 };
 
-const locations = {
+const locs = {
 	wf: {
 		name: "WEST FOREST",
 		color: colors.bg_wf,
@@ -1230,11 +2018,11 @@ const locations = {
 			"fake_harry",
 		],
 		boss: "fake_god",
-		boss_color: colors.bg_dkf,
+		boss_color: colors.bg_bonus,
 	},
 };
 
-const location_id = {
+const loc_id = {
 	wf: "wf",
 	sf: "sf",
 	ef: "ef",
@@ -1282,7 +2070,7 @@ let cheats = shallow_copy(cheats_template);
 
 let global_info = {
 	state: states.menu,
-	location: "wf",
+	loc: "wf",
 }
 
 let battle = {
@@ -1323,756 +2111,3 @@ let battle = {
 };
 
 let global_output_text = "error: global_output_text";
-
-function local_update() {
-	localStorage.setItem("local_data", JSON.stringify({player: player, cheats: cheats}));
-}
-
-function load_state(new_state) {
-	div_list.forEach((i) => document.getElementById(i).style.display = new_state[i] ? "block" : "none");
-	document.getElementById("div_battle_dkf").style.display = battle.enemy.special.includes(specials.dkf) ? "block" : "none";
-	if (!player.cheat_menu) {
-		document.getElementById("div_cheats").style.display = "none"
-	}
-	if (new_state.bg_color_area) {
-		if (new_state.div_battle && battle.enemy.special.includes(specials.boss)) {
-			document.body.style.backgroundColor = locations[global_info.location].boss_color;
-		} else {
-			document.body.style.backgroundColor = locations[global_info.location].color;
-		}
-	} else {
-		document.body.style.backgroundColor = "black";
-	}
-	display_update();
-}
-
-function change_state(new_state) {
-	global_info.state = new_state;
-	load_state(new_state);
-}
-
-function body_onload() {
-	let temp_local_data = localStorage.getItem("local_data");
-	if (temp_local_data) {
-		let local_data = JSON.parse(temp_local_data);
-		if (local_data.player) {
-			player.hp = local_data.player.hp || player_template.hp;
-			player.atk = local_data.player.atk || player_template.atk;
-			player.coins = local_data.player.coins || player_template.coins;
-			player.jump = local_data.player.jump || player_template.jump;
-			player.hook = local_data.player.hook || player_template.hook;
-			player.dig = local_data.player.dig || player_template.dig;
-			player.qp = local_data.player.qp || player_template.qp;
-			player.spiky = local_data.player.spiky || player_template.spiky;
-			player.cheat_menu = local_data.player.cheat_menu || player_template.cheat_menu;
-			if (local_data.player.inv) {
-				item_list.forEach((i) => player.inv[i] = local_data.player.inv[i] || player_template.inv[i]);
-			}
-		}
-		if (local_data.cheats) {
-			cheats.enemy_laser = local_data.cheats.enemy_laser || cheats_template.enemy_laser;
-			cheats.cheat_player_crit = local_data.cheats.cheat_player_crit || cheats_template.cheat_player_crit;
-			cheats.cheat_enemy_crit = local_data.cheats.cheat_enemy_crit || cheats_template.cheat_enemy_crit;
-			cheats.cheat_enemy_miss = local_data.cheats.cheat_enemy_miss || cheats_template.cheat_enemy_miss;
-		}
-	}
-	change_state(states.menu);
-}
-
-function select_forest(forest_id) {
-	global_info.location = forest_id;
-	if (forest_id == location_id.nf || forest_id == location_id.nfp) {
-		change_state(states.forest_north);
-	} else {
-		change_state(states.forest);
-	}
-}
-
-
-function stat_edit(modified_stat, stat_action, modified_item = items.acorn) {
-	switch (stat_info[modified_stat].type) {
-		case stat_types.item:
-			switch (stat_action) {
-				case stat_actions.min:
-					player.inv[modified_item] = 0;
-				break;
-				case stat_actions.minus:
-					player.inv[modified_item]--;
-				break;
-				case stat_actions.plus:
-					player.inv[modified_item]++;
-				break;
-				case stat_actions.max:
-					player.inv[modified_item] = 99;
-				break;
-			}
-		break;
-		case stat_types.range:
-			switch (stat_action) {
-				case stat_actions.min:
-					player[stat_info[modified_stat].name] = stat_info[modified_stat].min;
-				break;
-				case stat_actions.minus:
-					player[stat_info[modified_stat].name] -= stat_info[modified_stat].step;
-				break;
-				case stat_actions.plus:
-					player[stat_info[modified_stat].name] += stat_info[modified_stat].step;
-				break;
-				case stat_actions.max:
-					player[stat_info[modified_stat].name] = stat_info[modified_stat].max;
-				break;
-			}
-		break;
-		case stat_types.bool:
-			player[stat_info[modified_stat].name] = stat_action == stat_actions.on;
-		break;
-		case stat_types.cheat:
-			switch (stat_action) {
-				case stat_actions.random:
-					cheats[stat_info[modified_stat].name] = cheat_states.random;
-				break;
-				case stat_actions.never:
-					cheats[stat_info[modified_stat].name] = cheat_states.never;
-				break;
-				case stat_actions.always:
-					cheats[stat_info[modified_stat].name] = cheat_states.always;
-				break;
-			}
-		break;
-		case stat_types.laser:
-			switch (stat_action) {
-				case stat_actions.never:
-					cheats.enemy_laser = laser_states.none;
-				break;
-				case stat_actions.purple:
-					cheats.enemy_laser = laser_states.purple;
-				break;
-				case stat_actions.random:
-					cheats.enemy_laser = laser_states.random;
-				break;
-				case stat_actions.yellow:
-					cheats.enemy_laser = laser_states.yellow;
-				break;
-			}
-		break;
-	}
-	if (modified_stat == stat_id.cheat_menu) {
-		stat_edit(stat_id.cheat_player_crit, stat_actions.random);
-		stat_edit(stat_id.cheat_enemy_crit, stat_actions.random);
-		stat_edit(stat_id.cheat_enemy_miss, stat_actions.random);
-		change_state(states.stats);
-	}
-	local_update();
-	display_update();
-}
-
-function reset_stats() {
-	player = shallow_copy(player_template);
-	cheats = shallow_copy(cheats_template);
-	localStorage.clear();
-	change_state(states.stats);
-	display_update();
-}
-
-function min_stats() {
-	stat_edit(stat_id.hp, stat_actions.min);
-	stat_edit(stat_id.atk, stat_actions.min);
-	item_list.forEach((i) => stat_edit(stat_id.item, stat_actions.min, i));
-	stat_edit(stat_id.jump, stat_actions.off);
-	stat_edit(stat_id.hook, stat_actions.off);
-	stat_edit(stat_id.dig, stat_actions.off);
-	stat_edit(stat_id.qp, stat_actions.off);
-	stat_edit(stat_id.spiky, stat_actions.off);
-}
-
-function max_stats() {
-	stat_edit(stat_id.hp, stat_actions.max);
-	stat_edit(stat_id.atk, stat_actions.max);
-	item_list.forEach((i) => stat_edit(stat_id.item, stat_actions.max, i));
-	stat_edit(stat_id.jump, stat_actions.on);
-	stat_edit(stat_id.hook, stat_actions.on);
-	stat_edit(stat_id.dig, stat_actions.on);
-	stat_edit(stat_id.qp, stat_actions.on);
-	stat_edit(stat_id.spiky, stat_actions.on);
-}
-
-function clear_output_text() {
-	global_output_text = "";
-};
-
-function output_text(newest_text_output) {
-	global_output_text += "- " + newest_text_output + "<br>";
-};
-
-function output_text_silent(newest_text_output) {
-	global_output_text += newest_text_output + "<br>";
-};
-
-function clear_enemy_status_text() {
-	battle.enemy_status_text = "";
-}
-
-function enemy_status_text(newest_status) {
-	if (battle.enemy_status_text.length > 0) {
-		battle.enemy_status_text += "  ";
-	}
-	battle.enemy_status_text += newest_status;
-}
-
-function clear_player_status_text() {
-	battle.player_status_text = "";
-}
-
-function player_status_text(newest_status) {
-	if (battle.player_status_text.length > 0) {
-		battle.player_status_text += "  ";
-	}
-	battle.player_status_text += newest_status;
-}
-
-function display_update() {
-	document.getElementById("text_stats_name").innerHTML = player.name_long;
-	document.getElementById("text_stats_coins").innerHTML = player.coins + " COINS";
-	stat_list.range.forEach((i) => {
-		document.getElementById("text_stats_" + stat_info[i].name).innerHTML = stat_info[i].name_long + ": " + player[stat_info[i].name];
-		document.getElementById("btn_stats_" + stat_info[i].name + "_min").disabled = player[stat_info[i].name] <= stat_info[i].min;
-		document.getElementById("btn_stats_" + stat_info[i].name + "_minus").disabled = player[stat_info[i].name] <= stat_info[i].min;
-		document.getElementById("btn_stats_" + stat_info[i].name + "_plus").disabled = player[stat_info[i].name] >= stat_info[i].max;
-		document.getElementById("btn_stats_" + stat_info[i].name + "_max").disabled = player[stat_info[i].name] >= stat_info[i].max;
-	});
-	stat_list.bool.forEach((i) => {
-		document.getElementById("text_stats_" + stat_info[i].name).innerHTML = color(stat_info[i].name_long, player[stat_info[i].name] ? colors.normal : colors.faded);
-		document.getElementById("btn_stats_" + stat_info[i].name + "_off").disabled = !player[stat_info[i].name];
-		document.getElementById("btn_stats_" + stat_info[i].name + "_on").disabled = player[stat_info[i].name];
-	});
-	item_list.forEach((i) => {
-		document.getElementById("text_stats_inv_" + item_info[i].name).innerHTML = item_info[i].name_long + ": " + player.inv[i];
-		document.getElementById("btn_stats_inv_" + item_info[i].name + "_min").disabled = player.inv[i] <= 0;
-		document.getElementById("btn_stats_inv_" + item_info[i].name + "_minus").disabled = player.inv[i] <= 0;
-		document.getElementById("btn_stats_inv_" + item_info[i].name + "_plus").disabled = player.inv[i] >= 99;
-		document.getElementById("btn_stats_inv_" + item_info[i].name + "_max").disabled = player.inv[i] >= 99;
-	});
-	stat_list.cheat.forEach((i) => {
-		document.getElementById("text_stats_" + stat_info[i].name).innerHTML = color(stat_info[i].name_long, cheats[stat_info[i].name] == cheat_states.random ? colors.faded : colors.normal);
-		document.getElementById("btn_stats_" + stat_info[i].name + "_random").disabled = cheats[stat_info[i].name] == cheat_states.random;
-		document.getElementById("btn_stats_" + stat_info[i].name + "_never").disabled = cheats[stat_info[i].name] == cheat_states.never;
-		document.getElementById("btn_stats_" + stat_info[i].name + "_always").disabled = cheats[stat_info[i].name] == cheat_states.always;
-	});
-	switch (cheats.enemy_laser) {
-		case laser_states.none:
-			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.faded);
-		break;
-		case laser_states.purple:
-			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.reflect);
-		break;
-		case laser_states.random:
-			document.getElementById("text_stats_laser").innerHTML = color("LASER");
-		break;
-		case laser_states.yellow:
-			document.getElementById("text_stats_laser").innerHTML = color("LASER", colors.bonus);
-		break;
-	}
-	document.getElementById("btn_stats_laser_never").disabled = cheats.enemy_laser == laser_states.none;
-	document.getElementById("btn_stats_laser_purple").disabled = cheats.enemy_laser == laser_states.purple;
-	document.getElementById("btn_stats_laser_random").disabled = cheats.enemy_laser == laser_states.random;
-	document.getElementById("btn_stats_laser_yellow").disabled = cheats.enemy_laser == laser_states.yellow;
-	
-	for (let i = 0; i < 6 && i < locations[global_info.location].enemies.length; i++) {
-		document.getElementById("btn_enemy_" + i).innerHTML = enemies[locations[global_info.location].enemies[i]].name_long;
-	}
-	document.getElementById("btn_enemy_boss").innerHTML = enemies[locations[global_info.location].boss].name_long;
-	
-	document.getElementById("text_enemy_name").innerHTML = battle.enemy.name_long;
-	document.getElementById("text_player_name").innerHTML = player.name_long;
-	document.getElementById("div_enemy_hp_bar").style.width = (100 * nancatch(battle.enemy_hp / battle.enemy.hp)) + "%";
-	document.getElementById("div_player_hp_bar").style.width = (100 * nancatch(battle.player_hp / player.hp)) + "%";
-	
-	document.getElementById("text_output").innerHTML = global_output_text;
-	
-	if (window.matchMedia("(max-width:30rem)").matches) {
-		document.getElementById("text_enemy_atk").innerHTML = "";
-		document.getElementById("text_player_atk").innerHTML = "";
-		document.getElementById("text_enemy_atk").classList.add("marginless");
-		document.getElementById("text_player_atk").classList.add("marginless");
-		document.getElementById("text_enemy_hp").innerHTML = "HP:&nbsp;" + battle.enemy_hp + "/" + battle.enemy.hp + "  ATK:&nbsp;" + battle.enemy.atk + "  " + battle.enemy_status_text;
-		document.getElementById("text_player_hp").innerHTML = "HP:&nbsp;" + battle.player_hp + "/" + player.hp + "  ATK:&nbsp;" + battle.player_atk + "  " + battle.player_status_text;
-		document.getElementById("text_enemy_status").innerHTML = "";
-		document.getElementById("text_player_status").innerHTML = "";
-		document.getElementById("text_enemy_status").classList.add("marginless");
-		document.getElementById("text_player_status").classList.add("marginless");
-	} else {
-		document.getElementById("text_enemy_atk").innerHTML = "ATK: " + battle.enemy.atk;
-		document.getElementById("text_player_atk").innerHTML = "ATK: " + battle.player_atk;
-		document.getElementById("text_enemy_atk").classList.remove("marginless");
-		document.getElementById("text_player_atk").classList.remove("marginless");
-		document.getElementById("text_enemy_hp").innerHTML = "HP: " + battle.enemy_hp + "/" + battle.enemy.hp;
-		document.getElementById("text_player_hp").innerHTML = "HP: " + battle.player_hp + "/" + player.hp;
-		document.getElementById("text_enemy_status").innerHTML = battle.enemy_status_text;
-		document.getElementById("text_player_status").innerHTML = battle.player_status_text;
-		document.getElementById("text_enemy_status").classList.remove("marginless");
-		document.getElementById("text_player_status").classList.remove("marginless");
-	}
-	
-	["jump", "hook", "dig"].forEach((i) => {
-		if (player[i]) {
-			document.getElementById("btn_battle_" + i).classList.add(i);
-		} else {
-			document.getElementById("btn_battle_" + i).classList.remove(i);
-		}
-		document.getElementById("btn_battle_" + i).disabled = battle["player_" + i] < 3;
-		document.getElementById("btn_battle_" + i).innerHTML = i.toUpperCase() + (player[i] ? (battle["player_" + i] < 3 ? ("<br>(" + battle["player_" + i] + "/3)") : "<br>READY") : "");
-	});
-	if (battle.qp_available) {
-		document.getElementById("btn_battle_items").classList.add("qp");
-	} else {
-		document.getElementById("btn_battle_items").classList.remove("qp");
-	}
-	
-	document.getElementById("btn_battle_inv_acorn").innerHTML = "ACORN<br>+25% HP<br>x" + player.inv[items.acorn];
-	document.getElementById("btn_battle_inv_acorn").disabled = player.inv[items.acorn] <= 0 || (battle.qp_available);
-	document.getElementById("btn_battle_inv_fruit").innerHTML = "FRUIT<br>+50% HP<br>x" + player.inv[items.fruit];
-	document.getElementById("btn_battle_inv_fruit").disabled = player.inv[items.fruit] <= 0 || (battle.qp_available);
-	document.getElementById("btn_battle_inv_pizza").innerHTML = "PIZZA<br>FULL HP<br>x" + player.inv[items.pizza];
-	document.getElementById("btn_battle_inv_pizza").disabled = player.inv[items.pizza] <= 0 || (battle.qp_available);
-	document.getElementById("btn_battle_inv_atk").innerHTML = "ATK+<br>+50% 5T<br>x" + player.inv[items.atk];
-	document.getElementById("btn_battle_inv_atk").disabled = player.inv[items.atk] <= 0;
-	document.getElementById("btn_battle_inv_def").innerHTML = "DEF+<br>+33% 5T<br>x" + player.inv[items.def];
-	document.getElementById("btn_battle_inv_def").disabled = player.inv[items.def] <= 0;
-	document.getElementById("btn_battle_inv_shield").innerHTML = "SHIELD<br>INVN 3T<br>x" + player.inv[items.shield];
-	document.getElementById("btn_battle_inv_shield").disabled = player.inv[items.shield] <= 0;
-}
-
-function start_battle_from_index(enemy_index) {
-	battle.enemy = enemies[locations[global_info.location].enemies[enemy_index]];
-	battle_reset();
-}
-
-function start_battle_from_location(location) {
-	let enemy_list = locations[location].enemies;
-	let weight_sum = 0;
-	enemy_list.forEach((i) => weight_sum += enemies[i].weight);
-	let weight_index = Math.random() * weight_sum;
-	let enemy_chosen = false;
-	enemy_list.forEach((i) => {
-		if (!enemy_chosen && weight_index < enemies[i].weight) {
-			battle.enemy = enemies[i];
-			enemy_chosen = true;
-		} else {
-			weight_index -= enemies[i].weight;
-		}
-	});
-	battle_reset();
-}
-
-function start_battle_from_location_boss(location) {
-	battle.enemy = enemies[locations[location].boss];
-	battle_reset();
-}
-
-function start_battle_from_id(enemy_id) {
-	battle.enemy = enemies[enemy_id];
-	battle_reset();
-}
-
-function battle_reset() {
-	battle.player_hp = player.hp;
-	battle.player_atk = player.atk;
-	battle.player_atk_plus = 0;
-	battle.player_def_plus = 0;
-	battle.player_shield = 0;
-	battle.player_jump = player.jump ? 3 : 0;
-	battle.player_hook = player.hook ? 3 : 0;
-	battle.player_dig = player.dig ? 3 : 0;
-	battle.qp_available = player.qp;
-	item_list.forEach((i) => battle.player_items_used[i] = 0);
-	clear_player_status_text();
-	battle.enemy_hp = battle.enemy.hp;
-	battle.enemy_charging = false;
-	battle.enemy_boss_count = 1;
-	clear_enemy_status_text();
-	battle.turn_count = 1;
-	change_state(states.battle);
-	clear_output_text();
-	output_text("ENCOUNTERED " + color(battle.enemy.name_long));
-	if (player.jump && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.jumpless))) {
-		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("JUMP", colors.jump) + " ABILITY WITH THIS ENEMY");
-	}
-	if (player.hook && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.hookless))) {
-		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("HOOK", colors.hook) + " ABILITY WITH THIS ENEMY");
-	}
-	if (player.dig && (battle.enemy.progress.includes(progress_markers.tdf_act_1) || battle.enemy.progress.includes(progress_markers.digless))) {
-		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("DIG", colors.dig) + " ABILITY WITH THIS ENEMY");
-	}
-	if (player.qp && battle.enemy.progress.includes(progress_markers.tdf_act_1)) {
-		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("QUICK POCKET") + " ABILITY WITH THIS ENEMY");
-	}
-	if (player.spiky && battle.enemy.progress.includes(progress_markers.tdf_act_1)) {
-		output_text_silent("WARNING: NOT POSSIBLE TO HAVE " + color("SPIKY SHIELD") + " ABILITY WITH THIS ENEMY");
-	}
-	output_text_silent("");
-	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
-		output_text_silent("BOSS TIMER: " + color("1"));
-	}
-	output_text_silent("NEXT TURN: " + color("1"));
-	display_update();
-}
-
-function turn_use_item(used_item) {
-	output_text(color(player.name_short) + " USED " + color(item_info[used_item].name_long));
-	let player_healed = player.hp;
-	switch (used_item) {
-		case items.acorn:
-			player_healed /= 2;
-		case items.fruit:
-			player_healed /= 2;
-		case items.pizza:
-			player_healed = Math.round(player_healed);
-			battle.player_hp += player_healed;
-			if (battle.player_hp > player.hp) {
-				battle.player_hp = player.hp;
-			}
-			output_text(color(player.name_short) + " GAINED " + color(player_healed, colors.heal) + color(" HP"));
-		break;
-		case items.atk:
-			battle.player_atk_plus = 6;
-			battle.player_atk = Math.round(player.atk * 1.5);
-		break;
-		case items.def:
-			battle.player_def_plus = 6;
-		break;
-		case items.shield:
-			battle.player_shield = 3;
-		break;
-	}
-}
-
-function turn_win() {
-	battle.enemy_hp = 0;
-	change_state(states.battle_win);
-	output_text_silent("");
-	output_text(color("YOU WIN!"));
-	player.coins += battle.enemy.reward;
-	output_text("PRIZE: " + color(battle.enemy.reward) + " COINS");
-	local_update();
-}
-
-function turn_hander(player_action, used_item = items.acorn) {
-	change_state(states.battle);
-	clear_output_text();
-	
-	let enemy_damaged = battle.player_atk;
-	let player_blocking = false;
-	let qp_turn = battle.qp_available && player_action == actions.item;
-	let active_laser = laser_states.none;
-	if (battle.enemy.special.includes(specials.dkf)) {
-		active_laser = cheats.enemy_laser;
-	}
-	if (active_laser == laser_states.random) {
-		active_laser = randbool(0.5) ? laser_states.yellow : laser_states.purple;
-	}
-	switch (player_action) {
-		case actions.attack:
-			output_text(color(player.name_short) + " ATTACKED");
-			if (battle.enemy.special.includes(specials.chica) && battle.enemy_boss_count >= 3) {
-				battle.enemy_boss_count = 0;
-				output_text(color("JUMP!", colors.jump));
-			} else {
-				if (active_laser == laser_states.purple) {
-					enemy_damaged *= 2;
-					output_text(color("REFLECT!", colors.reflect));
-				}
-				if (active_laser == laser_states.yellow) {
-					enemy_damaged *= 1.5;
-					output_text(color("BONUS!", colors.bonus));
-				}
-				let player_crit = false;
-				if (
-					cheats.cheat_player_crit != cheat_states.never
-					&&
-					(randbool(0.1) || cheats.cheat_player_crit == cheat_states.always)
-				) {
-					player_crit = true;
-					enemy_damaged *= 3;
-					output_text(color("CRIT!", colors.crit));
-				}
-				enemy_damaged = Math.round(enemy_damaged);
-				if (active_laser == laser_states.purple) {
-					battle.player_hp -= enemy_damaged;
-					output_text(color(player.name_short) + " LOST " + color(enemy_damaged, player_crit ? colors.crit : colors.normal) + color(" HP"));
-				} else {
-					battle.enemy_hp -= enemy_damaged;
-					output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, player_crit ? colors.crit : colors.normal) + color(" HP"));
-				}
-			}
-		break;
-		case actions.block:
-			player_blocking = true;
-			output_text(color(player.name_short) + " BLOCKED");
-		break;
-		case actions.item:
-			player.inv[used_item]--;
-			battle.player_items_used[used_item]++;
-			turn_use_item(used_item);
-		break;
-		case actions.jump:
-			battle.player_jump = 0;
-			output_text(color(player.name_short) + " USED " + color("JUMP", colors.jump));
-		break;
-		case actions.hook:
-			battle.player_hook = 0;
-			output_text(color(player.name_short) + " USED " + color("HOOK", colors.hook));
-			if (battle.enemy.special.includes(specials.chica) && battle.enemy_boss_count >= 3) {
-				battle.enemy_boss_count = 0;
-				output_text(color("JUMP!", colors.jump));
-			} else {
-				if (active_laser == laser_states.purple) {
-					enemy_damaged *= 2;
-					output_text(color("REFLECT!", colors.reflect));
-				}
-				if (active_laser == laser_states.yellow) {
-					enemy_damaged *= 1.5;
-					output_text(color("BONUS!", colors.bonus));
-				}
-				enemy_damaged *= 3;
-				output_text(color("HOOK!", colors.hook));
-				enemy_damaged = Math.round(enemy_damaged);
-				if (active_laser == laser_states.purple) {
-					battle.player_hp -= enemy_damaged;
-					output_text(color(player.name_short) + " LOST " + color(enemy_damaged, colors.hook) + color(" HP"));
-				} else {
-					battle.enemy_hp -= enemy_damaged;
-					output_text(color(battle.enemy.name_long) + " LOST " + color(enemy_damaged, colors.hook) + color(" HP"));
-				}
-			}
-		break;
-		case actions.dig:
-			battle.player_dig = 0;
-			output_text(color(player.name_short) + " USED " + color("DIG", colors.dig));
-			output_text(color("DIG!", colors.dig));
-			let dig_item = items.acorn;
-			let item_index = Math.random() * 100;
-			let item_chosen = false;
-			item_list.forEach((i) => {
-				if (!item_chosen && item_index < item_info[i].weight) {
-					dig_item = i;
-					item_chosen = true;
-				} else {
-					item_index -= item_info[i].weight;
-				}
-			});
-			turn_use_item(dig_item);
-		break;
-	}
-	
-	let enemy_charged = false;
-	if (battle.enemy_charging) {
-		enemy_charged = true;
-		battle.enemy_charging = false;
-	}
-	let enemy_hook = false;
-	if (battle.enemy.special.includes(specials.foxy) && battle.enemy_boss_count >= 3 && !enemy_charged) {
-		enemy_hook = true;
-	}
-	if (battle.enemy_hp <= 0) {
-		turn_win();
-	} else if (!qp_turn) {
-		output_text_silent("");
-		if (battle.enemy.special.includes(specials.bonnie) && battle.enemy_boss_count >= 3 && !enemy_charged) {
-			battle.enemy_boss_count = 0;
-			output_text(color("DIG!", colors.dig));
-			output_text(color(battle.enemy.name_long) + " USED " + color("ACORN"));
-			let enemy_healed = Math.round(battle.enemy.hp / 4);
-			battle.enemy_hp += enemy_healed;
-			if (battle.enemy_hp > battle.enemy.hp) {
-				battle.enemy_hp = battle.enemy.hp;
-			}
-			output_text(color(battle.enemy.name_long) + " GAINED " + color(enemy_healed, colors.heal) + color(" HP"));
-		} else if (
-			!enemy_charged && !enemy_hook
-			&&
-			battle.enemy.crit > 0
-			&&
-			(battle.enemy.crit >= 100 || cheats.cheat_enemy_crit != cheat_states.never)
-			&&
-			(randbool(battle.enemy.crit / 100) || cheats.cheat_enemy_crit == cheat_states.always)
-		) {
-			battle.enemy_charging = true;
-			output_text(color(battle.enemy.name_long) + " IS " + color("CHARGING", colors.crit));
-			if (player_action == actions.jump) {
-				output_text(color("JUMP!", colors.jump));
-			}
-		} else {
-			output_text(color(battle.enemy.name_long) + " ATTACKED");
-			let player_damaged = battle.enemy.atk;
-			let player_damage_color = colors.normal;
-			if (
-				battle.enemy.miss > 0
-				&&
-				(battle.enemy.miss >= 100 || cheats.cheat_enemy_miss != cheat_states.never)
-				&&
-				(randbool(battle.enemy.miss / 100) || cheats.cheat_enemy_miss == cheat_states.always)
-			) {
-				if (enemy_hook) {
-					battle.enemy_boss_count = 0;
-				}
-				/*if (player_action == actions.jump) {
-					output_text(color("JUMP!", colors.jump));
-				}*/
-				output_text(color("MISS!", colors.miss));
-			} else if (player_action == actions.jump) {
-				if (enemy_hook) {
-					battle.enemy_boss_count = 0;
-				}
-				output_text(color("JUMP!", colors.jump));
-			} else if (battle.player_shield > 0) {
-				if (battle.enemy.special.includes(specials.dkf) && enemy_charged) {
-					battle.player_shield = 0;
-					output_text(color(battle.enemy.name_long) + " BROKE " + color("SHIELD", colors.shield));
-					if (player_blocking) {
-						player_damaged /= 2;
-						//output_text(color("BLOCK!"));
-					}
-					if (battle.player_def_plus > 0) {
-						player_damaged = player_damaged * 2 / 3;
-					}
-					player_damaged = Math.round(player_damaged * 3 / 2);
-					battle.player_hp -= player_damaged;
-					output_text(color(player.name_short) + " LOST " + color(player_damaged, colors.crit) + color(" HP"));
-				} else {
-					output_text(color("SHIELD!", colors.shield));
-					if (player.spiky) {
-						if (enemy_charged) {
-							player_damaged *= 3;
-							player_damage_color = colors.crit;
-							//output_text(color("CRIT!", colors.crit));
-						}
-						if (enemy_hook) {
-							battle.enemy_boss_count = 0;
-							player_damaged *= 5;
-							player_damage_color = colors.hook;
-							//output_text(color("HOOK!", colors.hook));
-						}
-						player_damaged = Math.round(player_damaged / 2);
-						battle.enemy_hp -= player_damaged;
-						output_text(color(battle.enemy.name_long) + " LOST " + color(player_damaged, player_damage_color) + color(" HP"));
-					}
-				}
-			} else {
-				if (player_blocking) {
-					player_damaged /= 2;
-					output_text(color("BLOCK!"));
-				}
-				if (battle.player_def_plus > 0) {
-					player_damaged = player_damaged * 2 / 3;
-				}
-				if (enemy_charged) {
-					player_damaged *= 3;
-					player_damage_color = colors.crit;
-					output_text(color("CRIT!", colors.crit));
-				}
-				if (enemy_hook) {
-					battle.enemy_boss_count = 0;
-					player_damaged *= 5;
-					player_damage_color = colors.hook;
-					output_text(color("HOOK!", colors.hook));
-				}
-				player_damaged = Math.round(player_damaged);
-				battle.player_hp -= player_damaged;
-				output_text(color(player.name_short) + " LOST " + color(player_damaged, player_damage_color) + color(" HP"));
-			}
-			battle.enemy_charging = false;
-		}
-		if (battle.enemy_hp <= 0) {
-			turn_win();
-		} else if (battle.player_hp <= 0) {
-			battle.player_hp = 0;
-			change_state(states.battle_lose);
-			output_text_silent("");
-			item_list.forEach((i) => player.inv[i] += battle.player_items_used[i]);
-			output_text(color("YOU LOSE..."));
-		}
-	}
-	output_text_silent("");
-	
-	if (!qp_turn) {
-		if (player.jump && battle.player_jump < 3) {
-			battle.player_jump++;
-		}
-		if (player.hook && battle.player_hook < 3) {
-			battle.player_hook++;
-		}
-		if (battle.player_dig < 3 && player.dig) {
-			battle.player_dig++;
-		}
-		
-		if (battle.player_atk_plus > 0) {
-			battle.player_atk_plus--;
-		}
-		if (battle.player_def_plus > 0) {
-			battle.player_def_plus--;
-		}
-		if (battle.player_shield > 0) {
-			battle.player_shield--;
-		}
-	}
-	
-	clear_enemy_status_text();
-	clear_player_status_text();
-	if (battle.enemy_charging) {
-		enemy_status_text(color("CHARGING", colors.crit));
-	}
-	if (battle.player_atk_plus > 0) {
-		if (battle.player_atk_plus == 1) {
-			output_text_silent("ATK+: " + color("1") + " TURN LEFT")
-			player_status_text(color("ATK+", colors.faded));
-		} else {
-			output_text_silent("ATK+: " + color(battle.player_atk_plus) + " TURNS LEFT")
-			player_status_text("ATK+");
-		}
-	} else {
-		battle.player_atk = player.atk;
-	}
-	if (battle.player_def_plus > 0) {
-		if (battle.player_def_plus == 1) {
-			output_text_silent("DEF+: " + color("1") + " TURN LEFT")
-			player_status_text(color("DEF+", colors.faded));
-		} else {
-			output_text_silent("DEF+: " + color(battle.player_def_plus) + " TURNS LEFT")
-			player_status_text("DEF+");
-		}
-	}
-	if (battle.player_shield > 0) {
-		if (battle.player_shield == 1) {
-			output_text_silent("SHIELD: " + color("1") + " TURN LEFT")
-			player_status_text(color("SHIELD", colors.shield_faded));
-		} else {
-			output_text_silent("SHIELD: " + color(battle.player_shield) + " TURNS LEFT")
-			player_status_text(color("SHIELD", colors.shield));
-		}
-	}
-	battle.qp_available = false;
-	if (!qp_turn) {
-		battle.turn_count++;
-	}
-	if (battle.enemy.special.includes(specials.chica) || battle.enemy.special.includes(specials.foxy) || battle.enemy.special.includes(specials.bonnie)) {
-		if (!qp_turn) {
-			battle.enemy_boss_count++;
-		}
-		output_text_silent("BOSS TIMER: " + color(battle.enemy_boss_count));
-	}
-	output_text_silent("NEXT TURN: " + color(battle.turn_count));
-	display_update();
-}
-
-function battle_info() {
-	clear_output_text();
-	output_text_silent("NAME: " + color(battle.enemy.name_long));
-	output_text_silent("LOCATION: " + color(battle.enemy.location));
-	output_text_silent("HP: " + color(battle.enemy.hp));
-	output_text_silent("ATK: " + color(battle.enemy.atk));
-	output_text_silent("CRIT: " + color(battle.enemy.crit) + "%");
-	output_text_silent("MISS: " + color(battle.enemy.miss) + "%");
-	output_text_silent("SPAWN: " + color(battle.enemy.spawn) + "%");
-	output_text_silent("REWARD: " + color(battle.enemy.reward) + " COINS");
-	display_update();
-}

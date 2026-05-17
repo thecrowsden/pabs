@@ -15,15 +15,15 @@ v1.0.0
 </head>
 
 <body onLoad="body_onload()">
-	<div class="box">
-		<p class="title"><b>POPGOES ARCADE BATTLE SIM<br><span class="color_dark">VER. 1.0.0 - </span><span class="link" onclick="load_state(states.changelog)">CHANGELOG</span></b></p>
+	<div class="box title">
+		<p><b>POPGOES ARCADE BATTLE SIM<br><span class="color_dark">VER. 1.0.0 - </span><span class="link" onclick="load_state(states.changelog)">CHANGELOG</span></b></p>
 	</div>
 	<div id="div_changelog">
 		<div class="button_zone">
 			<button type="button" class="button_wide" onclick="change_state(global_info.state)">BACK</button>
 		</div>
-		<div class="box color_dark">
-			<p>
+		<div class="box selectable">
+			<p class="color_dark">
 <!--
 - ?/?/26 <span class="color_normal">VER. 1.0.1</span>:<br>
 placeholder<br>
@@ -39,25 +39,25 @@ Initial version. hello bmc!
 			<button type="button" class="button_wide" onclick="change_state(states.stats)">EDIT STATS</button>
 			<div></div>
 			<div class="button_column">
-				<button type="button" class="button_normal" onclick="select_forest(location_id.wf)">WEST FOREST</button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.wf)">WEST FOREST</button>
 				<div></div>
-				<button type="button" class="button_normal" onclick="select_forest(location_id.sf)">SOUTH FOREST</button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.sf)">SOUTH FOREST</button>
 				<div></div>
-				<button type="button" class="button_normal" onclick="select_forest(location_id.ef)">EAST FOREST</button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.ef)">EAST FOREST</button>
 				<div></div>
-				<button type="button" class="button_normal" onclick="select_forest(location_id.nf)">NORTH FOREST</button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.nf)">NORTH FOREST</button>
 			</div>
 			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="select_forest(location_id.wfp)">WEST FOREST<span class="color_plus">+</span></button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.wfp)">WEST FOREST<span class="color_plus">+</span></button>
 				<div></div>
-				<button type="button" class="button_normal" onclick="select_forest(location_id.sfp)">SOUTH FOREST<span class="color_plus">+</span></button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.sfp)">SOUTH FOREST<span class="color_plus">+</span></button>
 				<div></div>
-				<button type="button" class="button_normal" onclick="select_forest(location_id.efp)">EAST FOREST<span class="color_plus">+</span></button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.efp)">EAST FOREST<span class="color_plus">+</span></button>
 				<div></div>
-				<button type="button" class="button_normal" onclick="select_forest(location_id.nfp)">NORTH FOREST<span class="color_plus">+</span></button>
+				<button type="button" class="button_normal" onclick="select_forest(loc_id.nfp)">NORTH FOREST<span class="color_plus">+</span></button>
 			</div>
 			<div></div>
-			<button type="button" class="button_wide" onclick="select_forest(location_id.bonus)"><span class="color_bonus_zone">BONUS</span></button>
+			<button type="button" class="button_wide" onclick="select_forest(loc_id.bonus)"><span class="color_bonus_zone">BONUS</span></button>
 		</div>
 	</div>
 	<div id="div_stats">
@@ -190,7 +190,7 @@ Initial version. hello bmc!
 				<button type="button" class="button_normal" onclick="change_state(states.menu)">BACK</button>
 			</div>
 			<div class="button_column_right">
-				<button type="button" class="button_normal" onclick="start_battle_from_location(global_info.location)">RANDOM</button>
+				<button type="button" class="button_normal" onclick="start_battle_from_loc(global_info.loc)">RANDOM</button>
 			</div>
 			<div></div>
 			<div class="button_column">
@@ -212,14 +212,14 @@ Initial version. hello bmc!
 				</div>
 			</div>
 			<div></div>
-			<button type="button" id="btn_enemy_boss" class="button_wide" onclick="start_battle_from_location_boss(global_info.location)">error: btn_enemy_boss</button>
+			<button type="button" id="btn_enemy_boss" class="button_wide" onclick="start_battle_from_loc_boss(global_info.loc)">error: btn_enemy_boss</button>
 		</div>
 	</div>
 	<div id="div_battle">
 		<div id="div_battle_button_info">
 			<div class="button_zone">
 				<div class="button_column">
-					<button type="button" class="button_normal" onclick="select_forest(global_info.location)">ESCAPE</button>
+					<button type="button" class="button_normal" onclick="select_forest(global_info.loc)">ESCAPE</button>
 				</div>
 				<div class="button_column_right">
 					<button type="button" class="button_normal" onclick="battle_info()">INFO</button>
@@ -228,13 +228,13 @@ Initial version. hello bmc!
 		</div>
 		<div id="div_battle_win">
 			<div class="button_zone">
-				<button type="button" class="button_wide" onclick="select_forest(global_info.location)">BACK</button>
+				<button type="button" class="button_wide" onclick="select_forest(global_info.loc)">BACK</button>
 			</div>
 		</div>
 		<div id="div_battle_lose">
 			<div class="button_zone">
 				<div class="button_column">
-					<button type="button" class="button_normal" onclick="select_forest(global_info.location)">BACK</button>
+					<button type="button" class="button_normal" onclick="select_forest(global_info.loc)">BACK</button>
 				</div>
 				<div class="button_column_right">
 					<button type="button" class="button_normal" onclick="battle_reset()">RETRY</button>
@@ -320,7 +320,7 @@ Initial version. hello bmc!
 				<button type="button" class="button_wide" onclick="change_state(states.battle)">BACK</button>
 			</div>
 		</div>
-		<div class="box">
+		<div class="box selectable">
 			<p id="text_output" class="color_dark whitespace">error: text_output</p>
 		</div>
 	</div>
